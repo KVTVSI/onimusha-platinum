@@ -239,6 +239,10 @@ section > h2, .section-title {
 .trophy.done .t-name, .trophy.done .t-desc, .trophy.done .t-tip { opacity: .5; }
 .trophy.done .t-name { text-decoration: line-through; text-decoration-thickness: 1px; }
 body.hide-done .trophy.done { display: none; }
+.trophy.from-psn { cursor: default; }
+.trophy.from-psn input:checked + .box { background: var(--soul); border-color: var(--soul); }
+.legend { display: flex; gap: 14px; flex-wrap: wrap; font-size: 12.5px; color: var(--muted); }
+.legend i { display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: 5px; vertical-align: -1px; }
 
 /* Boss tips */
 .boss { display: grid; gap: 14px; }
@@ -268,7 +272,7 @@ footer { font-size: 13px; color: var(--muted); }
   <header>
     <div class="eyebrow">PS5 · Платиновый трофей «Непобедимый»</div>
     <h1>Onimusha: Way of the Sword — <span>путь к платине</span></h1>
-    <p class="lede">План в пять этапов, собранный из всех подсказок и комментариев к трофеям на Stratege и сверенный с roadmap PowerPyx. Отмечайте полученные трофеи — отметки сохраняются на этом устройстве.</p>
+    <p class="lede">План в пять этапов, собранный из всех подсказок и комментариев к трофеям на Stratege и сверенный с roadmap PowerPyx. Полученные трофеи подтягиваются из PSN при сверке, а между сверками их можно отмечать вручную.</p>
     <div class="stats">
       <div class="stat"><b>52</b><span class="grades"><i><span class="badge g-p" style="width:14px;height:14px;font-size:0"></span>1</i><i><span class="badge g-g" style="width:14px;height:14px;font-size:0"></span>2</i><i><span class="badge g-s" style="width:14px;height:14px;font-size:0"></span>9</i><i><span class="badge g-b" style="width:14px;height:14px;font-size:0"></span>40</i></span></div>
       <div class="stat"><b>2</b><span>прохождения минимум: «Экшен», затем НГ+ на «Резне»</span></div>
@@ -282,8 +286,9 @@ footer { font-size: 13px; color: var(--muted); }
     <div class="tools">
       <button class="btn" id="hide" type="button" aria-pressed="false">Скрыть полученные</button>
       <button class="btn danger" id="reset" type="button">Сбросить отметки</button>
-      <span class="sync" id="sync">Отметки сохраняются на этом устройстве</span>
+      <span class="sync" id="sync">Загружаю данные PSN…</span>
     </div>
+    <div class="legend"><span><i style="background: var(--soul)"></i>получен по данным PSN</span><span><i style="background: var(--ai)"></i>отмечен вручную</span></div>
   </header>
 
   <nav class="jump" aria-label="Этапы">
@@ -527,14 +532,17 @@ const KEY = 'onimusha-plat-v1';
 let done = {};
 try { done = JSON.parse(localStorage.getItem(KEY)) || {}; } catch (e) { done = {}; }
 const save = () => { try { localStorage.setItem(KEY, JSON.stringify(done)); } catch (e) {} };
+// Trophies confirmed by the last PSN sync (progress.json); they stay checked and can't be unticked
+let psn = new Set();
+const isDone = id => !!done[id] || psn.has(id);
 const gradeLetter = {p:'П', g:'З', s:'С', b:'Б'};
 const gradeName = {p:'платина', g:'золото', s:'серебро', b:'бронза'};
 
 function row(id) {
   const t = T[id];
   const who = t.who ? ` <span class="who">— ${t.who}</span>` : '';
-  return `<label class="trophy${done[id] ? ' done' : ''}" data-id="${id}">
-    <input type="checkbox" id="cb-${id}" ${done[id] ? 'checked' : ''}><span class="box" aria-hidden="true"></span>
+  return `<label class="trophy${isDone(id) ? ' done' : ''}" data-id="${id}">
+    <input type="checkbox" id="cb-${id}" ${isDone(id) ? 'checked' : ''}><span class="box" aria-hidden="true"></span>
     <span class="badge g-${t.g}" title="${gradeName[t.g]}">${gradeLetter[t.g]}</span>
     <span class="t-main">
       <span class="t-name">${t.en} <em>/ ${t.ru}</em></span>
@@ -567,13 +575,13 @@ tl.innerHTML = STAGES.map((s, i) => {
 
 function update() {
   const all = Object.keys(T);
-  const n = all.filter(id => done[id]).length;
+  const n = all.filter(isDone).length;
   document.getElementById('total').textContent = `${n} / ${all.length}`;
   document.getElementById('jumptotal').textContent = `${n}/${all.length}`;
   document.getElementById('totalbar').style.width = (n / all.length * 100) + '%';
   STAGES.forEach((s, i) => {
     const ids = s.groups.flatMap(g => g.ids);
-    document.querySelector(`[data-count="${i}"]`).textContent = `${ids.filter(id => done[id]).length} / ${ids.length}`;
+    document.querySelector(`[data-count="${i}"]`).textContent = `${ids.filter(isDone).length} / ${ids.length}`;
   });
 }
 
@@ -581,21 +589,48 @@ tl.addEventListener('change', e => {
   const lab = e.target.closest('.trophy');
   if (!lab) return;
   const id = lab.dataset.id;
+  if (psn.has(id)) return;
   if (e.target.checked) done[id] = 1; else delete done[id];
-  lab.classList.toggle('done', e.target.checked);
-  save(); update(); queueRemote();
+  save(); applyState();
 });
 
+function applyState() {
+  document.querySelectorAll('.trophy').forEach(l => {
+    const id = l.dataset.id;
+    const fromPsn = psn.has(id);
+    const inp = l.querySelector('input');
+    l.classList.toggle('done', isDone(id));
+    l.classList.toggle('from-psn', fromPsn);
+    l.title = fromPsn ? 'Получен по данным PSN' : '';
+    inp.checked = isDone(id);
+    inp.disabled = fromPsn;
+  });
+  update();
+}
 function applyDone(next) {
   done = next;
-  document.querySelectorAll('.trophy').forEach(l => {
-    const on = !!done[l.dataset.id];
-    l.classList.toggle('done', on);
-    l.querySelector('input').checked = on;
-  });
-  save(); update();
+  save(); applyState();
 }
-function queueRemote() {}
+
+const syncEl = document.getElementById('sync');
+const norm = s => String(s).toLowerCase().replace(/[‘’`´]/g, "'").replace(/\s+/g, ' ').trim();
+fetch('progress.json', { cache: 'no-store' })
+  .then(r => (r.ok ? r.json() : null))
+  .then(p => {
+    if (!p || !p.updated) {
+      syncEl.textContent = 'Сверки с PSN ещё не было. Свои отметки хранятся на этом устройстве.';
+      return;
+    }
+    const names = new Set((p.earned || []).map(e => norm(typeof e === 'string' ? e : e.name)));
+    psn = new Set(Object.keys(T).filter(id => names.has(norm(T[id].en))));
+    if (psn.size !== names.size) console.warn('progress.json: не все названия трофеев совпали с планом');
+    const when = new Date(p.updated).toLocaleDateString('ru-RU', { day: 'numeric', month: 'long' });
+    syncEl.textContent = `Сверено с PSN ${when}: ${psn.size} из 52. Остальные отметки — на этом устройстве.`;
+    applyState();
+  })
+  .catch(() => {
+    syncEl.textContent = 'Не удалось загрузить данные PSN. Свои отметки хранятся на этом устройстве.';
+  });
 
 const hideBtn = document.getElementById('hide');
 let hide = false;
@@ -620,7 +655,6 @@ resetBtn.addEventListener('click', () => {
   }
   clearTimeout(armed); armed = null;
   applyDone({});
-  queueRemote();
   resetBtn.textContent = 'Отметки сброшены';
   setTimeout(() => { resetBtn.textContent = 'Сбросить отметки'; }, 2000);
 });
