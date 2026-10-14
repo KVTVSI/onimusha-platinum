@@ -1,7 +1,16 @@
 {
   "psnId": "KVTVSI",
   "game": "Onimusha: Way of the Sword",
-  "source": null,
-  "updated": null,
-  "earned": []
+  "source": "https://psnprofiles.com/trophies/42724-onimusha-way-of-the-sword/KVTVSI",
+  "updated": "2026-10-14T10:31:23+03:00",
+  "earned": [
+    {
+      "name": "Get This Thing Off Me",
+      "date": "13th Oct 2026"
+    },
+    {
+      "name": "Berserker",
+      "date": "13th Oct 2026"
+    }
+  ]
 }
