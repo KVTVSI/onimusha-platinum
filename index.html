@@ -4,656 +4,1009 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="Onimusha">
-<meta name="theme-color" content="#EEF2F8" media="(prefers-color-scheme: light)">
-<meta name="theme-color" content="#0A1020" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#EEF1F6" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0A1021" media="(prefers-color-scheme: dark)">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
-<style>
-:root { color-scheme: light; padding-top: env(safe-area-inset-top, 0px); padding-bottom: env(safe-area-inset-bottom, 0px); }
-body { margin: 0; }
-img { max-width: 100%; }
-[hidden] { display: none !important; }
-</style>
 <title>Onimusha: путь к платине</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Spectral:wght@600;800&family=Golos+Text:wght@400;500;600;700&family=JetBrains+Mono:wght@500&display=swap">
-<!-- Brush kanji: only the seven glyphs the page uses, so the Japanese font stays a few KB -->
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Yuji+Syuku&text=%E4%B8%80%E4%BA%8C%E4%B8%89%E5%9B%9B%E4%BA%94%E9%AC%BC%E9%AD%82&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Spectral:wght@600;800&family=Golos+Text:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600&display=swap">
+<!-- Brush kanji: only the glyphs the page uses, so the Japanese font stays a few KB -->
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Yuji+Syuku&text=%E9%81%93%E6%8E%A2%E9%AC%BC%E9%AD%82%E4%B8%80%E4%BA%8C%E4%B8%89%E5%9B%9B%E4%BA%94%E7%99%BD%E9%87%91%E9%8A%80%E9%8A%85%E5%B7%8C%E7%BE%A9%E5%86%8D%E5%BF%83%E6%AD%A6%E8%80%85%E8%A1%8C%E8%B3%9E%E6%9B%B8%E6%8E%9F%E5%85%B8%E9%8C%B2%E9%96%80&display=swap">
 <style>
-/* Aizome: an indigo-dyed hero band with a brush 鬼 watermark, then one calm reading column on cool paper.
-   Each stage opens with its kanji inside an ensō ring that closes as the stage's trophies come in;
-   the soul-fire glow is reserved for progress. The sticky bar (search + stage chips) is the remote
-   control while playing with the phone next to the PS5. */
+/* Dojo: the plan is a game menu, not a document. Four tabs along the bottom (道 探 鬼 魂), the main
+   screen is a map of five torii gates, each stage opens as a set of hanging scrolls, a trophy is a
+   card that slides up from below, and earned trophies become hanko seals stamped in indigo ink.
+   Washi grain and stamp speckle are tiny SVG noise tiles, so the texture costs no images. */
 :root {
-  --paper: #EEF2F8;
-  --surface: #FFFFFF;
-  --surface-2: #F5F7FB;
-  --ink: #0E1A33;
-  --muted: #55617A;
-  --line: #D6DEEA;
-  --line-strong: #B4C1D6;
-  --ai: #1E3F9A;
-  --ai-soft: #E0E8F8;
-  --on-ai: #FFFFFF;
-  --soul: #0A72B6;
-  --soul-soft: #DDEFFA;
-  --glow: #57CFFF;
+  color-scheme: light;
+  --paper: #EEF1F6;
+  --paper-2: #E4E9F1;
+  --surface: #FAFBFD;
+  --surface-2: #F1F4F9;
+  --ink: #0F1A36;
+  --muted: #59657F;
+  --faint: #A2ADC3;
+  --line: #D6DDE8;
+  --line-strong: #B2BFD5;
+  --ai: #1F3E99;
+  --ai-ink: #FFFFFF;
+  --ai-soft: #E0E7F7;
+  --soul: #0A6FB0;
+  --soul-soft: #DCEEFA;
+  --glow: #4FC3FF;
+  --stamp: #22409E;
+  --stamp-psn: #0B6FB0;
+  --on-stamp: #F7F9FD;
+  --gate-ink: #16244D;
+  --gate-cur: #DCE5F8;
+  --road: #DCE3EE;
+  --rod: #22356E;
+  --rod-end: #0F1A36;
   --warn: #B03A2B;
-  --warn-soft: #F8E5E1;
+  --warn-soft: #F7E4E0;
   --plat: #5A7EAE;
   --gold: #9C720F;
   --silver: #687284;
   --bronze: #A6643A;
-  --hero: #13285E;
-  --hero-ink: #EEF3FC;
-  --hero-muted: #AFC0DF;
-  --hero-line: rgba(238, 243, 252, .18);
-  --hero-fill: #4B7CF0;
-  --bar-bg: rgba(238, 242, 248, .84);
-  --toast: #0E1A33;
+  --scrim: rgba(8, 14, 32, .42);
+  --tab-bg: rgba(238, 241, 246, .9);
+  --toast: #0F1A36;
   --toast-ink: #EEF3FC;
-  --shadow: 0 1px 0 rgba(14, 26, 51, .04), 0 12px 28px -20px rgba(14, 26, 51, .45);
+  --shadow: 0 1px 0 rgba(15, 26, 54, .04), 0 10px 24px -18px rgba(15, 26, 54, .45);
+  --sheet-shadow: 0 -18px 40px -16px rgba(8, 14, 32, .4);
+  --washi: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='320' height='320'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .06 0 0 0 0 .1 0 0 0 0 .22 0 0 0 1.7 -1'/%3E%3C/filter%3E%3Cfilter id='f'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.0125 .1' numOctaves='2' seed='7' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .06 0 0 0 0 .1 0 0 0 0 .22 0 0 0 2.4 -1.45'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.07'/%3E%3Crect width='100%25' height='100%25' filter='url(%23f)' opacity='.05'/%3E%3C/svg%3E");
+  --speck: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='90' height='90'%3E%3Cfilter id='s'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.55' numOctaves='2' seed='4' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 3.4 -2.05'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23s)'/%3E%3C/svg%3E");
+  --brush: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 300 20' preserveAspectRatio='none'%3E%3Cpath d='M2 11C20 6 50 4 90 5S200 6 250 5 290 7 298 9C290 11 270 13 240 14S120 15 80 15 20 15 2 11Z'/%3E%3Cpath d='M190 3.4C240 2.8 275 4 297 6.4' fill='none' stroke='%23000' stroke-width='.9' opacity='.7'/%3E%3Cpath d='M170 17C225 17.4 268 15.4 296 12' fill='none' stroke='%23000' stroke-width='.8' opacity='.55'/%3E%3C/svg%3E");
   --display: 'Spectral', Georgia, 'Times New Roman', serif;
   --body: 'Golos Text', system-ui, -apple-system, 'Segoe UI', sans-serif;
   --mono: 'JetBrains Mono', ui-monospace, Consolas, monospace;
   --kanji: 'Yuji Syuku', 'Hiragino Mincho ProN', 'Yu Mincho', 'Noto Serif JP', serif;
-  --gut-l: max(20px, env(safe-area-inset-left, 0px));
-  --gut-r: max(20px, env(safe-area-inset-right, 0px));
-  /* A dry-brush stroke, used as a mask so it takes any token colour */
-  --brush: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 300 20' preserveAspectRatio='none'%3E%3Cpath d='M2 11C20 6 50 4 90 5S200 6 250 5 290 7 298 9C290 11 270 13 240 14S120 15 80 15 20 15 2 11Z'/%3E%3Cpath d='M190 3.4C240 2.8 275 4 297 6.4' fill='none' stroke='%23000' stroke-width='.9' opacity='.7'/%3E%3Cpath d='M170 17C225 17.4 268 15.4 296 12' fill='none' stroke='%23000' stroke-width='.8' opacity='.55'/%3E%3C/svg%3E");
+  --gut-l: max(16px, env(safe-area-inset-left, 0px));
+  --gut-r: max(16px, env(safe-area-inset-right, 0px));
+  --top: env(safe-area-inset-top, 0px);
+  --bottom: env(safe-area-inset-bottom, 0px);
+  --tab-h: 62px;
 }
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
-    --paper: #0A1020; --surface: #111A2E; --surface-2: #0D1527; --ink: #E3E9F5; --muted: #93A0BA;
-    --line: #1F2B45; --line-strong: #33436A;
-    --ai: #8AAEFF; --ai-soft: #17264B; --on-ai: #0A1020;
-    --soul: #5CCBFF; --soul-soft: #0E2C45; --glow: #7FDBFF;
+    color-scheme: dark;
+    --paper: #0A1021; --paper-2: #070C19; --surface: #111A30; --surface-2: #0D1528;
+    --ink: #E4E9F5; --muted: #95A1BB; --faint: #4F5C7B; --line: #1F2A45; --line-strong: #34436B;
+    --ai: #8DAEFF; --ai-ink: #0A1021; --ai-soft: #18264A;
+    --soul: #5CCBFF; --soul-soft: #0E2B44; --glow: #7FDBFF;
+    --stamp: #3F63D8; --stamp-psn: #1886C6; --on-stamp: #F2F6FF;
+    --gate-ink: #4C6FD8; --gate-cur: #18264A; --road: #131C33; --rod: #2C4288; --rod-end: #8DAEFF;
     --warn: #F0907C; --warn-soft: #3A1E1C;
     --plat: #A7C4EA; --gold: #E3BC5C; --silver: #BAC3D0; --bronze: #D99C6B;
-    --hero: #0F1B3C; --hero-line: rgba(238, 243, 252, .14);
-    --bar-bg: rgba(10, 16, 32, .82);
-    --toast: #1A2747; --toast-ink: #EEF3FC;
-    --shadow: none;
-    color-scheme: dark;
+    --scrim: rgba(0, 0, 0, .58); --tab-bg: rgba(10, 16, 33, .88);
+    --toast: #1A2747; --toast-ink: #EEF3FC; --shadow: none; --sheet-shadow: 0 -18px 40px -16px rgba(0, 0, 0, .7);
+    --washi: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='320' height='320'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .75 0 0 0 0 .82 0 0 0 0 1 0 0 0 1.7 -1'/%3E%3C/filter%3E%3Cfilter id='f'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.0125 .1' numOctaves='2' seed='7' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .75 0 0 0 0 .82 0 0 0 0 1 0 0 0 2.4 -1.45'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.045'/%3E%3Crect width='100%25' height='100%25' filter='url(%23f)' opacity='.035'/%3E%3C/svg%3E");
   }
 }
 :root[data-theme="dark"] {
-  --paper: #0A1020; --surface: #111A2E; --surface-2: #0D1527; --ink: #E3E9F5; --muted: #93A0BA;
-  --line: #1F2B45; --line-strong: #33436A;
-  --ai: #8AAEFF; --ai-soft: #17264B; --on-ai: #0A1020;
-  --soul: #5CCBFF; --soul-soft: #0E2C45; --glow: #7FDBFF;
+  color-scheme: dark;
+  --paper: #0A1021; --paper-2: #070C19; --surface: #111A30; --surface-2: #0D1528;
+  --ink: #E4E9F5; --muted: #95A1BB; --faint: #4F5C7B; --line: #1F2A45; --line-strong: #34436B;
+  --ai: #8DAEFF; --ai-ink: #0A1021; --ai-soft: #18264A;
+  --soul: #5CCBFF; --soul-soft: #0E2B44; --glow: #7FDBFF;
+  --stamp: #3F63D8; --stamp-psn: #1886C6; --on-stamp: #F2F6FF;
+  --gate-ink: #4C6FD8; --gate-cur: #18264A; --road: #131C33; --rod: #2C4288; --rod-end: #8DAEFF;
   --warn: #F0907C; --warn-soft: #3A1E1C;
   --plat: #A7C4EA; --gold: #E3BC5C; --silver: #BAC3D0; --bronze: #D99C6B;
-  --hero: #0F1B3C; --hero-line: rgba(238, 243, 252, .14);
-  --bar-bg: rgba(10, 16, 32, .82);
-  --toast: #1A2747; --toast-ink: #EEF3FC;
-  --shadow: none;
-  color-scheme: dark;
+  --scrim: rgba(0, 0, 0, .58); --tab-bg: rgba(10, 16, 33, .88);
+  --toast: #1A2747; --toast-ink: #EEF3FC; --shadow: none; --sheet-shadow: 0 -18px 40px -16px rgba(0, 0, 0, .7);
+  --washi: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='320' height='320'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .75 0 0 0 0 .82 0 0 0 0 1 0 0 0 1.7 -1'/%3E%3C/filter%3E%3Cfilter id='f'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.0125 .1' numOctaves='2' seed='7' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .75 0 0 0 0 .82 0 0 0 0 1 0 0 0 2.4 -1.45'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.045'/%3E%3Crect width='100%25' height='100%25' filter='url(%23f)' opacity='.035'/%3E%3C/svg%3E");
 }
 
 * { box-sizing: border-box; }
-html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; background: var(--paper); }
 body {
-  background: var(--paper);
-  color: var(--ink);
-  font-family: var(--body);
-  font-size: 15.5px;
-  line-height: 1.6;
-  overflow-x: hidden;
-  -webkit-font-smoothing: antialiased;
+  margin: 0; min-height: 100vh;
+  background-color: var(--paper); background-image: var(--washi);
+  color: var(--ink); font-family: var(--body); font-size: 15.5px; line-height: 1.55;
+  overflow-x: hidden; -webkit-font-smoothing: antialiased; -webkit-tap-highlight-color: transparent;
 }
+html.locked, html.locked body { overflow: hidden; }
+[hidden] { display: none !important; }
 a { color: var(--ai); text-underline-offset: 3px; text-decoration-thickness: 1px; }
 b { font-weight: 600; }
-a:focus-visible, button:focus-visible, .check input:focus-visible + .box, .t-main:focus-visible { outline: 2px solid var(--ai); outline-offset: 2px; }
+button { font: inherit; color: inherit; -webkit-tap-highlight-color: transparent; }
+:focus-visible { outline: 2px solid var(--ai); outline-offset: 2px; }
+[tabindex="-1"]:focus { outline: none; }
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); clip-path: inset(50%); white-space: nowrap; }
+.mono { font-family: var(--mono); }
 
-/* ---------- Hero: aizome band ---------- */
-.hero {
-  position: relative; overflow: hidden; overflow: clip;
-  background: var(--hero); color: var(--hero-ink);
-  margin-top: calc(-1 * env(safe-area-inset-top, 0px));
-  padding: calc(40px + env(safe-area-inset-top, 0px)) var(--gut-r) 34px var(--gut-l);
-  border-bottom: 1px solid var(--hero-line);
+/* ---------- Shell ---------- */
+.app {
+  max-width: 600px; margin: 0 auto; min-width: 0;
+  padding: 0 var(--gut-r) calc(var(--tab-h) + var(--bottom) + 30px) var(--gut-l);
 }
-.hero-in { position: relative; max-width: 800px; margin: 0 auto; display: grid; gap: 20px; }
-/* the watermark sits in its own clipping layer so its glyph never widens the page */
-.hero-mark { position: absolute; inset: 0; overflow: hidden; z-index: 0; pointer-events: none; }
-.hero-mark span {
-  position: absolute; right: -0.12em; top: -0.18em;
-  font-family: var(--kanji); font-size: clamp(220px, 46vw, 380px); line-height: 1;
-  color: var(--hero-ink); opacity: .075;
-}
-.hero-in > * { position: relative; z-index: 1; }
+.view { padding-top: calc(var(--top) + 14px); display: grid; gap: 18px; min-width: 0; }
 .eyebrow {
-  font-family: var(--mono); font-size: 11.5px; letter-spacing: .14em; text-transform: uppercase;
-  color: var(--hero-muted); display: flex; align-items: center; gap: 10px;
+  margin: 0; font-family: var(--mono); font-size: 11px; font-weight: 500; letter-spacing: .14em; text-transform: uppercase;
+  color: var(--muted);
 }
-.eyebrow::before { content: ""; width: 18px; height: 1px; background: var(--glow); flex: none; }
-h1 { margin: 0; font-weight: 400; display: grid; gap: 6px; }
-h1 .game {
-  font-family: var(--body); font-weight: 600; font-size: clamp(1rem, 3.6vw, 1.2rem);
-  letter-spacing: .01em; color: var(--hero-muted);
+.view-hd { display: grid; grid-template-columns: 60px minmax(0, 1fr); gap: 14px; align-items: center; }
+.hd-seal {
+  width: 60px; height: 60px; display: grid; place-items: center; border-radius: 14px;
+  background: var(--ai); color: var(--ai-ink); font-family: var(--kanji); font-size: 38px; line-height: 1;
+  box-shadow: inset 0 0 0 3px var(--ai), inset 0 0 0 4.5px var(--ai-ink); position: relative; overflow: hidden;
 }
-h1 .goal {
-  font-family: var(--display); font-weight: 800;
-  font-size: clamp(2.5rem, 11.2vw, 4.2rem); line-height: 1; letter-spacing: -.015em;
-  text-wrap: balance;
+.view-hd h1, .path-hd h1 {
+  margin: 2px 0 0; font-family: var(--display); font-weight: 800; font-size: 1.65rem; line-height: 1.1; letter-spacing: -.01em; text-wrap: balance;
 }
-h1 .goal::after {
-  content: ""; display: block; width: min(230px, 62%); height: 13px; margin-top: 12px;
-  background: var(--glow); opacity: .9;
+
+/* ---------- Tab bar ---------- */
+.tabbar {
+  position: fixed; z-index: 20; left: 0; right: 0; bottom: 0;
+  padding: 0 env(safe-area-inset-right, 0px) var(--bottom) env(safe-area-inset-left, 0px);
+  background: var(--tab-bg);
+  -webkit-backdrop-filter: saturate(1.5) blur(18px); backdrop-filter: saturate(1.5) blur(18px);
+  border-top: 1px solid var(--line);
+}
+.tabbar-in { max-width: 600px; margin: 0 auto; height: var(--tab-h); display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); }
+.tab {
+  appearance: none; -webkit-appearance: none; border: 0; background: none; cursor: pointer;
+  display: grid; place-items: center; align-content: center; gap: 3px; min-height: 44px; color: var(--muted);
+}
+.tab-k {
+  width: 38px; height: 32px; display: grid; place-items: center; border-radius: 9px;
+  font-family: var(--kanji); font-size: 23px; line-height: 1;
+  transition: background-color .2s, color .2s;
+}
+.tab-l { font-size: 11px; font-weight: 500; line-height: 1.1; }
+.tab[aria-selected="true"] { color: var(--ai); }
+.tab[aria-selected="true"] .tab-k { background: var(--ai); color: var(--ai-ink); }
+.tab:focus-visible { outline-offset: -4px; border-radius: 12px; }
+
+/* ---------- Path: header ---------- */
+.path-hd { position: relative; display: grid; gap: 14px; }
+.hd-mark { position: absolute; inset: -14px 0 0 0; overflow: hidden; pointer-events: none; z-index: 0; }
+.hd-mark span {
+  position: absolute; right: -14px; top: -8px; font-family: var(--kanji); font-size: 168px; line-height: 1;
+  color: var(--ai); opacity: .08;
+}
+.path-hd > :not(.hd-mark) { position: relative; z-index: 1; }
+.hd-top { display: flex; justify-content: space-between; align-items: center; gap: 12px; min-height: 44px; }
+.path-hd h1 { font-size: 2.1rem; line-height: 1.02; }
+.path-hd h1::after {
+  content: ""; display: block; width: 150px; height: 11px; margin-top: 8px; background: var(--ai); opacity: .85;
   -webkit-mask: var(--brush) center / 100% 100% no-repeat; mask: var(--brush) center / 100% 100% no-repeat;
 }
-.lede { margin: 0; max-width: 60ch; color: var(--hero-muted); font-size: 15px; }
+.icon-btn {
+  flex: none; width: 44px; height: 44px; display: grid; place-items: center; border-radius: 12px;
+  border: 1px solid var(--line); background: var(--surface); color: var(--muted); cursor: pointer;
+}
+.icon-btn svg { width: 20px; height: 20px; }
+.prog {
+  display: grid; grid-template-columns: 46px minmax(0, 1fr); gap: 4px 12px; align-items: center;
+  background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 12px 14px; box-shadow: var(--shadow);
+}
+.prog-k {
+  grid-row: span 2; width: 46px; height: 46px; display: grid; place-items: center; border-radius: 50%;
+  border: 1.5px solid var(--ai); color: var(--ai); font-family: var(--kanji); font-size: 26px; line-height: 1;
+}
+.prog-row { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; }
+.prog-row span { font-size: 13px; color: var(--muted); }
+.prog-row b { font-family: var(--display); font-weight: 800; font-size: 1.55rem; line-height: 1; font-variant-numeric: lining-nums tabular-nums; }
+.prog-row b small { font-size: .62em; color: var(--muted); font-weight: 600; }
+.bar { height: 6px; border-radius: 3px; background: var(--line); overflow: hidden; }
+.bar i { display: block; height: 100%; width: 0; border-radius: 3px; background: linear-gradient(90deg, var(--ai), var(--glow)); transition: width .5s cubic-bezier(.2, .7, .2, 1); }
+.sync { grid-column: 1 / -1; margin: 6px 0 0; padding-top: 8px; border-top: 1px dashed var(--line); font-family: var(--mono); font-size: 11.5px; line-height: 1.45; color: var(--muted); }
+.sync::before { content: ""; display: inline-block; width: 7px; height: 7px; border-radius: 50%; background: var(--soul); margin-right: 7px; vertical-align: 1px; }
+.sync.off::before { background: var(--faint); }
 
-/* Soul-fire progress */
-.progress { display: grid; gap: 12px; margin-top: 4px; }
-.progress-row { display: flex; justify-content: space-between; align-items: flex-end; gap: 12px; }
-.progress-row > span {
-  font-family: var(--mono); font-size: 11.5px; letter-spacing: .14em; text-transform: uppercase;
-  color: var(--hero-muted); display: inline-flex; align-items: center; gap: 8px;
+/* ---------- Path: road of gates ---------- */
+.road-wrap { position: relative; padding-top: 10px; }
+.road-svg { position: absolute; left: 0; top: 0; width: 100%; height: 100%; z-index: 0; overflow: visible; pointer-events: none; }
+.road-band { fill: none; stroke: var(--road); stroke-width: 16; stroke-linecap: round; stroke-linejoin: round; }
+.road-future { fill: none; stroke: var(--line-strong); stroke-width: 2; stroke-dasharray: 1 7; stroke-linecap: round; }
+.road-walked { fill: none; stroke: var(--ai); stroke-width: 3; stroke-linecap: round; }
+.road { position: relative; z-index: 1; list-style: none; margin: 0; padding: 0; display: grid; gap: 4px; }
+.gate-btn {
+  width: 100%; display: flex; align-items: center; gap: 12px; padding: 4px 0; min-height: 104px;
+  background: none; border: 0; text-align: left; cursor: pointer; border-radius: 16px;
 }
-.soul-k { font-family: var(--kanji); font-size: 22px; letter-spacing: 0; text-transform: none; color: var(--glow); text-shadow: 0 0 14px rgba(87, 207, 255, .55); line-height: 1; }
-.progress-row b {
-  font-family: var(--display); font-weight: 800; font-size: 2rem; line-height: 1;
-  font-variant-numeric: tabular-nums lining-nums; white-space: nowrap;
+.gate:nth-child(even) .gate-btn { flex-direction: row-reverse; text-align: right; }
+.torii { flex: none; width: 108px; height: 92px; position: relative; }
+.torii svg { display: block; width: 100%; height: 100%; overflow: visible; }
+.tp { fill: var(--paper); stroke: var(--line-strong); stroke-width: 1.8; stroke-linejoin: round; }
+.is-done .tp { fill: var(--gate-ink); stroke: var(--gate-ink); }
+.is-current .tp { fill: var(--gate-cur); stroke: var(--ai); stroke-width: 2.2; }
+.flame { display: none; position: absolute; left: 50%; top: 52%; width: 20px; height: 28px; margin-left: -10px; }
+.flame svg { position: relative; width: 100%; height: 100%; transform-origin: 50% 90%; animation: flicker 1.9s ease-in-out infinite; filter: drop-shadow(0 0 6px rgba(79, 195, 255, .9)); }
+.flame::before {
+  content: ""; position: absolute; left: -16px; right: -16px; top: -12px; bottom: -16px; border-radius: 50%;
+  background: radial-gradient(closest-side, rgba(79, 195, 255, .42), rgba(79, 195, 255, 0));
+  animation: halo 2.8s ease-in-out infinite;
 }
-.bar { height: 6px; background: var(--hero-line); border-radius: 3px; position: relative; }
-.bar > div {
-  position: relative; height: 100%; width: 0; border-radius: 3px;
-  background: linear-gradient(90deg, var(--hero-fill), var(--glow));
-  transition: width .5s cubic-bezier(.2, .7, .2, 1);
+.is-current .flame { display: block; }
+@keyframes flicker { 0%, 100% { transform: scale(1, 1) rotate(-2deg); opacity: 1; } 30% { transform: scale(.94, 1.08) rotate(2deg); opacity: .9; } 60% { transform: scale(1.04, .95) rotate(-1deg); opacity: .96; } }
+@keyframes halo { 0%, 100% { opacity: .7; transform: scale(1); } 50% { opacity: 1; transform: scale(1.14); } }
+.gate-info {
+  flex: 1; min-width: 0; display: grid; gap: 3px; padding: 11px 14px 12px; border-radius: 14px;
+  background: var(--surface); border: 1px solid var(--line); box-shadow: var(--shadow);
 }
-/* the flame: an ember that rides the tip of the bar */
-.bar > div::after {
-  content: ""; position: absolute; right: -7px; top: 50%; width: 14px; height: 14px; margin-top: -7px;
-  border-radius: 50%;
-  background: radial-gradient(circle at 50% 45%, #FFFFFF 0 22%, var(--glow) 46%, rgba(87, 207, 255, 0) 72%);
-  box-shadow: 0 0 14px 4px rgba(87, 207, 255, .45);
-  animation: ember 2.6s ease-in-out infinite;
+.is-current .gate-info { border-color: var(--ai); box-shadow: 0 0 0 3px var(--ai-soft), var(--shadow); }
+.gate-top { display: flex; align-items: baseline; gap: 9px; }
+.gate:nth-child(even) .gate-top { flex-direction: row-reverse; }
+.gate-k { font-family: var(--kanji); font-size: 27px; line-height: 1; color: var(--ai); }
+.gate-name { font-family: var(--display); font-weight: 800; font-size: 1.22rem; line-height: 1.1; }
+.gate-meta { font-family: var(--mono); font-size: 11px; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
+.gate-prog { display: flex; align-items: center; gap: 8px; margin-top: 3px; }
+.gate:nth-child(even) .gate-prog { flex-direction: row-reverse; }
+.mini { flex: 1; max-width: 120px; height: 4px; border-radius: 2px; background: var(--line); overflow: hidden; }
+.mini i { display: block; height: 100%; width: 0; background: var(--ai); border-radius: 2px; transition: width .5s; }
+.is-done .mini i { background: var(--soul); }
+.gate-count { font-family: var(--mono); font-size: 12.5px; font-weight: 600; font-variant-numeric: tabular-nums; }
+.gate-tag:empty { display: none; }
+.gate-tag {
+  justify-self: start; margin-top: 4px; padding: 1px 8px; border-radius: 6px; font-size: 11.5px; font-weight: 600;
+  background: var(--ai); color: var(--ai-ink);
 }
-@keyframes ember { 0%, 100% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.18); opacity: .85; } }
+.gate:nth-child(even) .gate-tag { justify-self: end; }
+.is-done .gate-tag { background: var(--soul-soft); color: var(--soul); }
+.road .gate.gate-end .gate-btn { flex-direction: column; justify-content: center; text-align: center; gap: 8px; min-height: 0; padding: 18px 0 4px; }
+.end-seal {
+  width: 64px; height: 64px; display: grid; place-items: center; border-radius: 50%;
+  border: 1.5px dashed var(--line-strong); background: var(--paper);
+  font-family: var(--kanji); font-size: 19px; line-height: 1; writing-mode: vertical-rl; color: var(--faint);
+}
+.gate-end.is-done .end-seal { border: 0; background: var(--stamp); color: var(--on-stamp); box-shadow: inset 0 0 0 3px var(--stamp), inset 0 0 0 4.5px var(--on-stamp); }
+.end-txt { display: grid; gap: 1px; }
+.end-txt b { font-family: var(--display); font-weight: 800; font-size: 1.15rem; }
+.end-txt small { font-family: var(--mono); font-size: 11.5px; color: var(--muted); letter-spacing: .06em; }
 
-/* ---------- Main column ---------- */
-.wrap {
-  max-width: 800px;
-  margin: 0 auto;
-  padding-left: var(--gut-l);
-  padding-right: var(--gut-r);
-  padding-block: 28px 104px;
-  display: grid;
-  gap: 48px;
+/* ---------- Scrolls (details) ---------- */
+.scrolls { display: grid; gap: 22px; padding: 6px 0; }
+.scroll {
+  position: relative; min-width: 0;
+  background-color: var(--surface); background-image: var(--washi);
+  border: 1px solid var(--line); border-radius: 4px; box-shadow: var(--shadow);
 }
-.dash { display: grid; gap: 18px; }
-.stats {
-  display: grid; grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 1px; background: var(--line); border: 1px solid var(--line); border-radius: 14px; overflow: hidden;
-  box-shadow: var(--shadow);
+.scroll::before, .scroll::after {
+  content: ""; position: absolute; left: -6px; right: -6px; height: 8px; border-radius: 4px; pointer-events: none;
+  background: linear-gradient(90deg, var(--rod-end) 0 9px, var(--rod) 9px calc(100% - 9px), var(--rod-end) calc(100% - 9px));
 }
-.stat { background: var(--surface); padding: 14px 16px 15px; display: grid; gap: 4px; align-content: start; min-width: 0; }
-.stat b {
-  font-family: var(--display); font-weight: 800; font-size: 1.6rem; line-height: 1.1;
-  font-variant-numeric: lining-nums tabular-nums; color: var(--ink);
+.scroll::before { top: -5px; }
+.scroll::after { bottom: -5px; }
+.scroll > summary {
+  list-style: none; display: flex; align-items: center; gap: 12px; min-height: 58px; padding: 10px 14px; cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
 }
-.stat span { font-size: 13px; color: var(--muted); line-height: 1.4; }
-.grades { display: inline-flex; gap: 10px; align-items: center; flex-wrap: wrap; font-family: var(--mono); font-size: 12.5px; }
+.scroll > summary::-webkit-details-marker { display: none; }
+.scroll > summary:focus-visible { outline-offset: -3px; border-radius: 6px; }
+.sk {
+  flex: none; width: 34px; height: 34px; display: grid; place-items: center; border-radius: 8px;
+  border: 1.5px solid var(--ai); color: var(--ai); font-family: var(--kanji); font-size: 20px; line-height: 1;
+}
+.st { flex: 1; min-width: 0; font-weight: 700; font-size: 16.5px; line-height: 1.25; }
+.st small { display: block; font-weight: 400; font-size: 12.5px; color: var(--muted); }
+.sc { flex: none; font-family: var(--mono); font-size: 12.5px; font-weight: 600; color: var(--muted); font-variant-numeric: tabular-nums; }
+.chev { flex: none; width: 18px; height: 18px; color: var(--muted); transition: transform .2s; }
+.scroll[open] > summary .chev { transform: rotate(180deg); }
+.scroll-body { padding: 4px 14px 20px; border-top: 1px dashed var(--line); display: grid; gap: 14px; min-width: 0; }
+
+/* rules content */
+.facts { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1px; background: var(--line); border: 1px solid var(--line); border-radius: 12px; overflow: hidden; margin-top: 12px; }
+.fact { background: var(--surface); padding: 10px 12px; display: grid; gap: 2px; align-content: start; min-width: 0; }
+.fact b { font-family: var(--display); font-weight: 800; font-size: 1.3rem; line-height: 1.1; font-variant-numeric: lining-nums; }
+.fact span { font-size: 12.5px; color: var(--muted); line-height: 1.35; }
+.grades { display: inline-flex; flex-wrap: wrap; gap: 4px 9px; font-family: var(--mono); font-size: 12px; }
 .grades i { font-style: normal; display: inline-flex; align-items: center; gap: 4px; }
-.dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
-
-.tools { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
-.btn {
-  font: inherit; font-size: 14px; font-weight: 500; min-height: 44px;
-  background: var(--surface); color: var(--ink);
-  border: 1px solid var(--line-strong); border-radius: 10px;
-  padding: 8px 16px; cursor: pointer; flex: 1 1 auto;
-  -webkit-tap-highlight-color: transparent;
-}
-.btn:hover { border-color: var(--ai); }
-.btn[aria-pressed="true"] { background: var(--ai-soft); border-color: var(--ai); color: var(--ai); }
-.btn.danger { color: var(--warn); border-color: var(--line); }
-.sync { font-size: 12px; color: var(--muted); font-family: var(--mono); line-height: 1.5; flex-basis: 100%; }
-.legend { display: flex; gap: 8px 18px; flex-wrap: wrap; align-items: center; font-size: 13px; color: var(--muted); }
-.legend > span { display: inline-flex; align-items: center; gap: 8px; }
-.legend .box { width: 16px; height: 16px; }
-.legend .box.psn { border-radius: 50%; background: var(--soul); border-color: var(--soul); }
-.legend .box.man { background: var(--ai); border-color: var(--ai); }
-
-/* ---------- Sticky bar ---------- */
-.topbar {
-  position: sticky; top: 0; z-index: 5;
-  margin-left: calc(-1 * var(--gut-l)); margin-right: calc(-1 * var(--gut-r));
-  padding: calc(8px + env(safe-area-inset-top, 0px)) var(--gut-r) 8px var(--gut-l);
-  background: var(--paper);
-  background: var(--bar-bg);
-  -webkit-backdrop-filter: saturate(1.6) blur(16px); backdrop-filter: saturate(1.6) blur(16px);
-  border-bottom: 1px solid var(--line);
-  display: grid; gap: 8px;
-}
-.bar-row { display: flex; gap: 6px; align-items: center; }
-.search { position: relative; flex: 1; min-width: 0; }
-.search svg { position: absolute; left: 12px; top: 13px; width: 18px; height: 18px; color: var(--muted); pointer-events: none; }
-.search input {
-  width: 100%; font: inherit; font-size: 16px; /* 16px keeps iOS from zooming on focus */
-  height: 44px; padding: 0 44px 0 38px;
-  border: 1px solid var(--line-strong); border-radius: 10px;
-  background: var(--surface); color: var(--ink);
-  -webkit-appearance: none; appearance: none;
-}
-.search input::placeholder { color: var(--muted); opacity: 1; }
-.search input:placeholder-shown { padding-right: 10px; } /* the clear button only appears once there is text */
-.search input:focus { outline: 2px solid var(--ai); outline-offset: -1px; border-color: var(--ai); }
-.search input::-webkit-search-cancel-button { display: none; }
-.search button {
-  position: absolute; right: 0; top: 0;
-  width: 44px; height: 44px; border: 0; background: none; color: var(--muted);
-  font-size: 22px; line-height: 1; cursor: pointer; border-radius: 10px;
-}
-.chip-btn {
-  flex: none; height: 44px; padding: 0 11px;
-  font: inherit; font-size: 13.5px; font-weight: 500; color: var(--ink);
-  background: var(--surface); border: 1px solid var(--line-strong); border-radius: 10px; cursor: pointer;
-  -webkit-tap-highlight-color: transparent;
-}
-.chip-btn[aria-pressed="true"] { background: var(--ai); border-color: var(--ai); color: var(--on-ai); }
-.jump { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 6px; }
-.jump a {
-  position: relative; overflow: hidden;
-  min-height: 46px; display: grid; place-items: center; align-content: center; gap: 1px;
-  text-decoration: none; color: var(--ink); line-height: 1.1;
-  border: 1px solid var(--line); border-radius: 10px; background: var(--surface);
-  -webkit-tap-highlight-color: transparent;
-}
-.jump a b { font-family: var(--kanji); font-weight: 400; font-size: 19px; line-height: 1.05; }
-.jump a small { font-family: var(--mono); font-size: 11px; color: var(--muted); font-variant-numeric: tabular-nums; }
-/* thin per-stage progress line along the chip's bottom edge */
-.jump a::after {
-  content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 2px;
-  background: var(--soul); transform-origin: left; transform: scaleX(var(--p, 0));
-  transition: transform .4s ease;
-}
-.jump a[aria-current="true"] { background: var(--ai); border-color: var(--ai); color: var(--on-ai); }
-.jump a[aria-current="true"] small { color: var(--on-ai); opacity: .85; }
-.jump a[aria-current="true"]::after { background: var(--glow); }
-.jump a.complete small { color: var(--soul); font-weight: 500; }
-.jump a.complete[aria-current="true"] small { color: var(--on-ai); }
-.stage, #carnage, #qstatus { scroll-margin-top: calc(var(--bar-h, 110px) + 12px); }
-.qstatus { margin: 0; color: var(--muted); font-size: 14px; font-family: var(--mono); }
-body.searching .rules, body.searching #carnage, body.searching .sources, body.searching footer,
-body.searching .intro, body.searching .note, body.searching .stage-clear { display: none; }
-
-/* ---------- Section titles ---------- */
-section > h2, .section-title {
-  font-family: var(--display); font-weight: 800; font-size: 1.7rem; line-height: 1.15; letter-spacing: -.01em;
-  margin: 0; text-wrap: balance;
-}
-.rules > h2::after, .sources > h2::after, .sec-head h2::after {
-  content: ""; display: block; width: 92px; height: 10px; margin-top: 10px;
-  background: var(--ai);
-  -webkit-mask: var(--brush) center / 100% 100% no-repeat; mask: var(--brush) center / 100% 100% no-repeat;
-}
-
-/* ---------- Rules ---------- */
-.rules { display: grid; gap: 18px; }
+.dot { width: 9px; height: 9px; border-radius: 50%; display: inline-block; }
+.d-p { background: var(--plat); } .d-g { background: var(--gold); } .d-s { background: var(--silver); } .d-b { background: var(--bronze); }
+.sub-h { margin: 6px 0 0; font-family: var(--mono); font-size: 11.5px; font-weight: 500; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); }
 .keyrules { margin: 0; padding: 0; list-style: none; display: grid; gap: 10px; }
-.keyrules li { position: relative; padding-left: 22px; }
-.keyrules li::before {
-  content: ""; position: absolute; left: 3px; top: .62em; width: 7px; height: 7px;
-  background: var(--ai); transform: rotate(45deg);
-}
-.carry { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px; }
-.carry > div {
-  background: var(--surface); border: 1px solid var(--line); border-radius: 14px;
-  padding: 16px 18px; min-width: 0; box-shadow: var(--shadow); position: relative; overflow: hidden;
-}
+.keyrules li { position: relative; padding-left: 20px; }
+.keyrules li::before { content: ""; position: absolute; left: 3px; top: .62em; width: 7px; height: 7px; background: var(--ai); transform: rotate(45deg); }
+.carry { display: grid; gap: 10px; }
+.carry > div { border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px 12px 16px; position: relative; overflow: hidden; background: var(--surface); }
 .carry > div::before { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 3px; }
 .carry .yes::before { background: var(--ai); }
 .carry .no::before { background: var(--warn); }
-.carry h3 { margin: 0 0 8px; font-size: 11.5px; font-family: var(--mono); font-weight: 500; letter-spacing: .12em; text-transform: uppercase; }
-.carry .yes h3 { color: var(--ai); }
-.carry .no h3 { color: var(--warn); }
+.carry h3 { margin: 0 0 6px; font-family: var(--mono); font-size: 11.5px; font-weight: 500; letter-spacing: .12em; text-transform: uppercase; }
+.carry .yes h3 { color: var(--ai); } .carry .no h3 { color: var(--warn); }
 .carry ul { margin: 0; padding-left: 18px; }
 .carry li { margin: 3px 0; }
-.carry li::marker { color: var(--muted); }
+.src, .who { font-family: var(--mono); font-size: 11.5px; color: var(--muted); line-height: 1.5; }
+.sources { margin: 0; padding-left: 20px; display: grid; gap: 8px; font-size: 14.5px; }
+.sources li::marker { color: var(--muted); }
+.legend { display: grid; gap: 10px; font-size: 14px; }
+.legend > span { display: flex; align-items: center; gap: 10px; }
+.legend .box { flex: none; }
+.legend .box.psn { border-radius: 50%; background: var(--soul); border-color: var(--soul); }
+.legend .box.man { background: var(--ai); border-color: var(--ai); }
+.btn {
+  min-height: 46px; padding: 8px 16px; border-radius: 12px; cursor: pointer; font-size: 14.5px; font-weight: 600;
+  border: 1px solid var(--line-strong); background: var(--surface); color: var(--ink);
+}
+.btn.danger { color: var(--warn); }
+.btn.link { display: flex; align-items: center; gap: 10px; text-align: left; width: 100%; }
+.btn.link .gk { font-family: var(--kanji); font-size: 20px; color: var(--ai); font-weight: 400; }
 
-/* ---------- Timeline ---------- */
-.timeline { display: grid; gap: 0; }
-.stage { display: grid; gap: 20px; padding-block: 40px; border-top: 1px solid var(--line); min-width: 0; }
-.stage:first-child { border-top: 0; padding-top: 4px; }
-.stage:last-child { padding-bottom: 0; }
-.stage-head { display: grid; grid-template-columns: 72px minmax(0, 1fr); gap: 16px; align-items: center; }
-.kanji { width: 72px; height: 72px; display: grid; place-items: center; position: relative; }
-.kanji > * { grid-area: 1 / 1; }
-.kanji span { font-family: var(--kanji); font-size: 34px; line-height: 1; color: var(--ink); transform: translateY(1px); }
-/* ensō: the ring closes as the stage's trophies come in */
-.enso { width: 100%; height: 100%; transform: rotate(-75deg); overflow: visible; }
+/* ---------- Checkboxes ---------- */
+.box {
+  width: 24px; height: 24px; border: 1.5px solid var(--line-strong); border-radius: 6px; display: grid; place-items: center;
+  background: var(--surface); flex: none; transition: background-color .15s, border-color .15s;
+}
+input:checked + .box { background: var(--ai); border-color: var(--ai); }
+input:checked + .box::after, .legend .box::after {
+  content: ""; width: 11px; height: 5.5px; border: 2px solid var(--surface); border-top: 0; border-right: 0;
+  transform: rotate(-45deg) translate(1px, -1px);
+}
+.tick input, .task input { position: absolute; opacity: 0; width: 1px; height: 1px; margin: 0; }
+input:focus-visible + .box { outline: 2px solid var(--ai); outline-offset: 2px; }
+
+/* ---------- Stage screen ---------- */
+.stage-bar { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+.back {
+  display: inline-flex; align-items: center; gap: 6px; min-height: 44px; padding: 0 14px 0 8px; border-radius: 12px; cursor: pointer;
+  border: 1px solid var(--line); background: var(--surface); font-weight: 600; font-size: 14.5px;
+}
+.back svg { width: 18px; height: 18px; }
+.stage-nav { display: flex; align-items: center; gap: 4px; font-family: var(--mono); font-size: 12px; color: var(--muted); }
+.stage-nav button { width: 44px; height: 44px; border-radius: 12px; border: 1px solid var(--line); background: var(--surface); cursor: pointer; display: grid; place-items: center; }
+.stage-nav button:disabled { opacity: .35; cursor: default; }
+.stage-nav svg { width: 18px; height: 18px; }
+.stage-hero { display: grid; grid-template-columns: 116px minmax(0, 1fr); gap: 16px; align-items: center; }
+.enso-big { width: 116px; height: 116px; display: grid; place-items: center; position: relative; }
+.enso-big > * { grid-area: 1 / 1; }
+.enso { width: 100%; height: 100%; transform: rotate(-80deg); overflow: visible; }
 .enso circle { fill: none; stroke-linecap: round; }
-.enso-track { stroke: var(--line-strong); stroke-width: 2.5; stroke-dasharray: 179 16; opacity: .7; }
-.enso-fill { stroke: var(--ai); stroke-width: 4; transition: stroke-dasharray .5s cubic-bezier(.2, .7, .2, 1); }
-.stage.complete .enso-fill { stroke: var(--soul); }
-.stage.complete .enso { filter: drop-shadow(0 0 5px rgba(87, 207, 255, .55)); }
+.enso-track { stroke: var(--line-strong); stroke-width: 3; opacity: .7; }
+.enso-fill { stroke: var(--ai); stroke-width: 6; transition: stroke-dasharray .6s cubic-bezier(.2, .7, .2, 1); }
+.complete .enso-fill { stroke: var(--soul); }
+.complete .enso { filter: drop-shadow(0 0 6px rgba(79, 195, 255, .55)); }
+.enso-k { font-family: var(--kanji); font-size: 56px; line-height: 1; transform: translateY(2px); }
 .stage-titles { display: grid; gap: 6px; min-width: 0; }
-.stage-meta {
-  display: flex; gap: 4px 12px; flex-wrap: wrap; align-items: center;
-  font-size: 11.5px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); font-family: var(--mono);
-}
-.stage-meta > span + span::before { content: ""; display: inline-block; width: 3px; height: 3px; border-radius: 50%; background: var(--line-strong); margin-right: 12px; vertical-align: middle; }
-.stage-meta .count { font-variant-numeric: tabular-nums; color: var(--ai); }
-.stage.complete .stage-meta .count { color: var(--soul); }
-.stage h2 { font-family: var(--display); font-weight: 800; font-size: 1.5rem; line-height: 1.18; letter-spacing: -.01em; margin: 0; text-wrap: balance; }
-.intro { margin: 0; padding: 0; list-style: none; display: grid; gap: 9px; }
-.intro li { position: relative; padding-left: 22px; }
-.intro li::before { content: ""; position: absolute; left: 2px; top: .8em; width: 11px; height: 2px; border-radius: 1px; background: var(--line-strong); }
-.stage-clear { margin: 0; color: var(--muted); font-style: italic; }
+.stage-titles h1 { margin: 0; font-family: var(--display); font-weight: 800; font-size: 1.45rem; line-height: 1.15; text-wrap: balance; }
+.stage-sum { margin: 0; font-size: 13.5px; color: var(--muted); }
+.stage-sum b { color: var(--ink); font-variant-numeric: tabular-nums; }
 
-.note {
-  border-radius: 12px; padding: 15px 18px 16px 20px; display: grid; gap: 8px;
-  background: var(--ai-soft); color: var(--ink); position: relative; overflow: hidden;
+.tasks { list-style: none; margin: 0; padding: 0; display: grid; }
+.task label { display: grid; grid-template-columns: 26px minmax(0, 1fr); gap: 12px; padding: 10px 0; min-height: 48px; cursor: pointer; border-top: 1px solid var(--line); }
+.task:first-child label { border-top: 0; }
+.task .box { margin-top: 1px; }
+.task-txt { font-size: 14.5px; line-height: 1.45; }
+.task input:checked ~ .task-txt { color: var(--muted); }
+
+.tool-row { display: flex; justify-content: flex-end; }
+.chip {
+  min-height: 44px; padding: 0 15px; border-radius: 22px; cursor: pointer; font-size: 14px; font-weight: 500;
+  border: 1px solid var(--line-strong); background: var(--surface); color: var(--ink);
 }
+.chip[aria-pressed="true"] { background: var(--ai); border-color: var(--ai); color: var(--ai-ink); }
+.group { display: grid; gap: 8px; }
+.group-hd { display: flex; align-items: baseline; gap: 4px 10px; flex-wrap: wrap; padding: 0 2px; }
+.group-hd h3 { margin: 0; font-family: var(--mono); font-size: 11.5px; font-weight: 500; letter-spacing: .12em; text-transform: uppercase; }
+.group-note { font-size: 12.5px; color: var(--muted); flex: 1; }
+.group-count { margin-left: auto; font-family: var(--mono); font-size: 12px; color: var(--muted); font-variant-numeric: tabular-nums; }
+.stage-clear, .empty { margin: 0; color: var(--muted); font-style: italic; }
+.note { border-radius: 12px; padding: 14px 16px 15px 18px; display: grid; gap: 8px; background: var(--ai-soft); position: relative; overflow: hidden; }
 .note::before { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 3px; background: var(--ai); }
-.note.warn { background: var(--warn-soft); }
-.note.warn::before { background: var(--warn); }
-.note.soul { background: var(--soul-soft); }
-.note.soul::before { background: var(--soul); }
+.note.warn { background: var(--warn-soft); } .note.warn::before { background: var(--warn); }
+.note.soul { background: var(--soul-soft); } .note.soul::before { background: var(--soul); }
 .note h3 { margin: 0; font-size: 15px; font-weight: 700; }
 .note p, .note ol, .note ul { margin: 0; }
 .note ol, .note ul { padding-left: 20px; display: grid; gap: 6px; }
-.src { font-size: 12px; color: var(--muted); font-family: var(--mono); line-height: 1.5; }
+.next-gate { display: flex; align-items: center; gap: 12px; width: 100%; min-height: 60px; padding: 10px 14px; border-radius: 14px; cursor: pointer; text-align: left; border: 1px dashed var(--line-strong); background: transparent; }
+.next-gate .gk { flex: none; width: 36px; text-align: center; font-family: var(--kanji); font-size: 30px; color: var(--ai); line-height: 1; }
+.next-gate span { flex: 1; display: grid; }
+.next-gate small { font-family: var(--mono); font-size: 11px; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); }
+.next-gate b { font-size: 16px; }
 
-.group { display: grid; gap: 10px; }
-.group-title { display: flex; justify-content: space-between; align-items: baseline; gap: 4px 12px; flex-wrap: wrap; padding-inline: 2px; }
-.group-title h3 { margin: 0; font-size: 11.5px; font-family: var(--mono); font-weight: 500; letter-spacing: .12em; text-transform: uppercase; color: var(--ink); }
-.group-title p { margin: 0; font-size: 13px; color: var(--muted); }
-.list { display: grid; border: 1px solid var(--line); border-radius: 14px; background: var(--surface); overflow: hidden; box-shadow: var(--shadow); }
+/* ---------- Trophy rows ---------- */
+.list { display: grid; border: 1px solid var(--line); border-radius: 12px; background: var(--surface); overflow: hidden; }
+.row { display: grid; grid-template-columns: 48px minmax(0, 1fr); border-top: 1px solid var(--line); min-height: 58px; transition: background-color .2s; }
+.row:first-child { border-top: 0; }
+.row.done { background: var(--surface-2); }
+.tick { display: flex; align-items: center; justify-content: center; cursor: pointer; position: relative; }
+.row.psn .tick { cursor: default; }
+.row.psn .box { border-radius: 50%; }
+.row.psn input:checked + .box { background: var(--soul); border-color: var(--soul); box-shadow: 0 0 0 3px var(--soul-soft); }
+.row-main {
+  display: flex; align-items: center; gap: 10px; min-width: 0; padding: 8px 10px 8px 0;
+  background: none; border: 0; text-align: left; cursor: pointer;
+}
+.row-main:focus-visible { outline-offset: -2px; border-radius: 8px; }
+.gs {
+  flex: none; width: 30px; height: 30px; border-radius: 50%; border: 1.5px solid currentColor; display: grid; place-items: center;
+  font-family: var(--kanji); font-size: 15px; line-height: 1;
+}
+.gs.g-p { color: var(--plat); box-shadow: 0 0 0 2px var(--surface), 0 0 0 3.5px var(--plat); }
+.gs.g-g { color: var(--gold); } .gs.g-s { color: var(--silver); } .gs.g-b { color: var(--bronze); }
+.row-txt { flex: 1; min-width: 0; display: grid; gap: 1px; }
+.row-name { font-weight: 600; font-size: 15.5px; line-height: 1.28; }
+.row-sub { font-size: 13px; line-height: 1.3; color: var(--muted); }
+.row.done .row-name { color: var(--muted); }
+.row-side { flex: none; display: flex; align-items: center; gap: 6px; font-family: var(--mono); font-size: 12px; color: var(--muted); font-variant-numeric: tabular-nums; }
+.row-count:empty { display: none; }
+.row-count { padding: 1px 6px; border-radius: 6px; background: var(--ai-soft); color: var(--ai); font-weight: 600; }
+.row.done .row-count { background: var(--soul-soft); color: var(--soul); }
+.row-stage { font-family: var(--kanji); font-size: 15px; color: var(--muted); }
+.psn-tag { display: none; padding: 0 5px; border-radius: 5px; font-size: 10.5px; font-weight: 600; letter-spacing: .05em; line-height: 1.6; color: var(--soul); border: 1px solid var(--soul); background: var(--soul-soft); }
+.row.psn .psn-tag { display: inline-block; }
+.row-chev { flex: none; width: 16px; height: 16px; color: var(--faint); }
 
-/* Trophy row: only the left 48px column toggles the checkbox */
-.trophy { display: grid; grid-template-columns: 48px auto minmax(0, 1fr); gap: 0 10px; padding: 0 16px 0 0; border-top: 1px solid var(--line); align-items: start; transition: background-color .2s; }
-.trophy:first-child { border-top: 0; }
-.trophy.done { background: var(--surface-2); }
-.check { align-self: stretch; display: flex; justify-content: center; padding-top: 15px; min-height: 56px; cursor: pointer; -webkit-tap-highlight-color: transparent; }
-.check input { position: absolute; opacity: 0; width: 1px; height: 1px; }
-.box {
-  width: 24px; height: 24px; border: 1.5px solid var(--line-strong); border-radius: 6px;
-  display: grid; place-items: center; background: var(--surface); flex: none;
-  transition: background-color .15s, border-color .15s;
+/* ---------- Search ---------- */
+.search-top { position: sticky; top: 0; z-index: 6; margin: calc(-14px - var(--top)) calc(-1 * var(--gut-r)) 0 calc(-1 * var(--gut-l)); padding: calc(var(--top) + 12px) var(--gut-r) 10px var(--gut-l); background: var(--tab-bg); -webkit-backdrop-filter: saturate(1.5) blur(16px); backdrop-filter: saturate(1.5) blur(16px); border-bottom: 1px solid var(--line); }
+.search { position: relative; }
+.search svg { position: absolute; left: 13px; top: 15px; width: 18px; height: 18px; color: var(--muted); pointer-events: none; }
+.search input {
+  width: 100%; height: 48px; padding: 0 48px 0 40px; font: inherit; font-size: 16px; /* 16px keeps iOS from zooming */
+  border: 1px solid var(--line-strong); border-radius: 12px; background: var(--surface); color: var(--ink);
+  -webkit-appearance: none; appearance: none;
 }
-.check:hover .box { border-color: var(--ai); }
-.check input:checked + .box { background: var(--ai); border-color: var(--ai); }
-.check input:checked + .box::after { content: ""; width: 11px; height: 5.5px; border: 2px solid var(--surface); border-top: 0; border-right: 0; transform: rotate(-45deg) translate(1px, -1px); }
-/* PSN-confirmed: round soul-blue mark instead of a square, plus a text tag */
-.trophy.from-psn .check { cursor: default; }
-.trophy.from-psn .box { border-radius: 50%; }
-.trophy.from-psn .check input:checked + .box { background: var(--soul); border-color: var(--soul); box-shadow: 0 0 0 3px var(--soul-soft); }
-.psn-tag {
-  display: none; margin-left: 8px; padding: 0 6px; border-radius: 5px; vertical-align: 2px;
-  font-family: var(--mono); font-size: 10.5px; font-weight: 500; letter-spacing: .06em; line-height: 1.6;
-  color: var(--soul); background: var(--soul-soft); border: 1px solid var(--soul);
-  text-decoration: none;
+.search input::placeholder { color: var(--muted); opacity: 1; }
+.search input:focus { outline: 2px solid var(--ai); outline-offset: -1px; border-color: var(--ai); }
+.search input::-webkit-search-cancel-button { display: none; }
+.search button { position: absolute; right: 2px; top: 2px; width: 44px; height: 44px; border: 0; background: none; color: var(--muted); font-size: 24px; line-height: 1; cursor: pointer; border-radius: 10px; }
+.filters { display: grid; gap: 8px; }
+.chip-row { display: flex; gap: 8px; flex-wrap: wrap; }
+.seg {
+  display: grid; grid-auto-flow: column; grid-auto-columns: minmax(0, 1fr); gap: 3px; padding: 3px;
+  border: 1px solid var(--line); border-radius: 13px; background: var(--paper-2);
 }
-.trophy.from-psn .psn-tag { display: inline-block; }
-.badge {
-  width: 24px; height: 24px; border-radius: 50%; margin-top: 15px;
-  display: grid; place-items: center;
-  font-family: var(--mono); font-size: 11.5px; font-weight: 500; color: var(--surface);
+.seg button {
+  min-height: 44px; min-width: 0; border: 0; border-radius: 10px; background: transparent; cursor: pointer;
+  font-size: 13.5px; font-weight: 500; color: var(--muted); padding: 0 4px; display: grid; place-items: center; line-height: 1.1;
 }
-.g-p { background: var(--plat); } .g-g { background: var(--gold); } .g-s { background: var(--silver); } .g-b { background: var(--bronze); }
-.badge.g-p { box-shadow: 0 0 0 2px var(--surface), 0 0 0 3.5px var(--plat); }
-.t-main { display: grid; gap: 4px; min-width: 0; padding: 14px 0 15px; }
-.t-name { font-weight: 600; font-size: 16px; line-height: 1.35; }
-.t-name em { font-style: normal; font-weight: 400; color: var(--muted); }
-.t-desc { font-size: 14.5px; color: var(--muted); line-height: 1.5; }
-.t-tip { font-size: 14.5px; line-height: 1.55; }
-.t-tip .who { color: var(--muted); font-size: 12px; font-family: var(--mono); }
-.rar { display: flex; align-items: center; gap: 8px; font-family: var(--mono); font-size: 11.5px; color: var(--muted); font-variant-numeric: tabular-nums; margin-top: 2px; }
-.rar i {
-  flex: none; width: 40px; height: 3px; border-radius: 2px;
-  background: linear-gradient(90deg, var(--soul) calc(var(--r, 0) * 100%), var(--line) 0);
-}
-.more { display: none; font-size: 13px; font-weight: 500; color: var(--ai); white-space: nowrap; }
-.trophy.done .t-name em, .trophy.done .t-desc, .trophy.done .t-tip, .trophy.done .rar { opacity: .72; }
-.trophy.done .t-name { text-decoration: line-through; text-decoration-thickness: 1px; text-decoration-color: var(--muted); }
-/* Compact view: tips fold away, tap the row text to open one */
-body.compact .t-main { cursor: pointer; }
-body.compact .trophy:not(.open) .t-tip, body.compact .trophy:not(.open) .rar { display: none; }
-body.compact .trophy:not(.open) .more { display: inline; }
+.seg button .k { font-family: var(--kanji); font-size: 19px; line-height: 1; }
+.seg button[aria-pressed="true"] { background: var(--surface); color: var(--ai); box-shadow: 0 1px 2px rgba(15, 26, 54, .12), inset 0 0 0 1px var(--line); font-weight: 600; }
+.qstatus { margin: 0; color: var(--muted); font-size: 13.5px; font-family: var(--mono); }
+.hints { display: grid; gap: 12px; padding: 4px 2px; }
+.hints p { margin: 0; color: var(--muted); font-size: 14.5px; }
+.hint-chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.hint-chips .chip { border-style: dashed; }
 
-/* ---------- Undo toast ---------- */
+/* ---------- Seals ---------- */
+.seal-sum { margin: 0; display: flex; flex-wrap: wrap; gap: 4px 14px; font-family: var(--mono); font-size: 12.5px; color: var(--muted); }
+.seal-sum b { color: var(--ink); }
+.seal-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px 6px; }
+.seal-cell {
+  min-width: 0; display: grid; justify-items: center; align-content: start; gap: 6px; padding: 8px 2px 6px;
+  background: none; border: 0; border-radius: 12px; cursor: pointer;
+}
+.seal-cell:focus-visible { outline-offset: 0; }
+.hanko {
+  position: relative; width: 58px; height: 58px; display: grid; place-items: center; border-radius: 50%;
+  border: 1.5px dashed var(--line-strong); color: var(--faint); background: transparent;
+  font-family: var(--kanji); font-size: 26px; line-height: 1; transform: rotate(var(--rot, 0deg));
+}
+.hanko .hk { display: block; }
+.hanko.g-p .hk { writing-mode: vertical-rl; font-size: 17px; letter-spacing: -.04em; }
+.hanko.on {
+  border: 0; border-radius: 10px; background: var(--stamp); color: var(--on-stamp);
+  box-shadow: inset 0 0 0 3px var(--stamp), inset 0 0 0 4.5px var(--on-stamp);
+}
+.hanko.on.psn { border-radius: 50%; background: var(--stamp-psn); box-shadow: inset 0 0 0 3px var(--stamp-psn), inset 0 0 0 4.5px var(--on-stamp); }
+.hanko.on::after {
+  content: ""; position: absolute; inset: 0; border-radius: inherit; pointer-events: none;
+  background: var(--paper); opacity: .55;
+  -webkit-mask: var(--speck) 0 0 / 90px 90px repeat; mask: var(--speck) 0 0 / 90px 90px repeat;
+}
+.psn-mini {
+  display: none; position: absolute; right: -8px; bottom: -5px; z-index: 1;
+  padding: 0 4px; border-radius: 4px; font-family: var(--mono); font-size: 9.5px; font-weight: 600; letter-spacing: .04em; line-height: 1.5;
+  background: var(--surface); color: var(--soul); border: 1px solid var(--soul); transform: rotate(calc(-1 * var(--rot, 0deg)));
+}
+.hanko.psn .psn-mini { display: block; }
+.seal-name {
+  font-size: 11.5px; line-height: 1.25; text-align: center; color: var(--muted); max-width: 100%;
+  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; overflow-wrap: anywhere;
+}
+.seal-cell.is-on .seal-name { color: var(--ink); font-weight: 500; }
+.seal-ctr { font-family: var(--mono); font-size: 10.5px; color: var(--ai); font-weight: 600; margin-top: -3px; }
+.seal-legend { display: flex; flex-wrap: wrap; gap: 8px 16px; font-size: 12.5px; color: var(--muted); align-items: center; }
+.seal-legend span { display: inline-flex; align-items: center; gap: 7px; }
+.lg { width: 16px; height: 16px; display: inline-block; }
+.lg.psn { border-radius: 50%; background: var(--stamp-psn); }
+.lg.man { border-radius: 4px; background: var(--stamp); }
+.lg.no { border-radius: 50%; border: 1.5px dashed var(--line-strong); }
+
+/* ---------- Bosses ---------- */
+.boss-tiles { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+.btile {
+  position: relative; overflow: hidden; min-height: 94px; padding: 12px 14px; text-align: left; cursor: pointer;
+  display: grid; align-content: end; gap: 2px; border-radius: 14px; border: 1px solid var(--line);
+  background-color: var(--surface); background-image: var(--washi); box-shadow: var(--shadow);
+}
+.btile .bt-k { position: absolute; right: -4px; top: -10px; font-family: var(--kanji); font-size: 68px; line-height: 1; color: var(--ai); opacity: .16; pointer-events: none; }
+.btile b { position: relative; font-size: 15px; line-height: 1.2; }
+.btile small { position: relative; font-family: var(--mono); font-size: 11.5px; color: var(--muted); }
+.btile[aria-selected="true"] { background-color: var(--ai); border-color: var(--ai); color: var(--ai-ink); }
+.btile[aria-selected="true"] small { color: var(--ai-ink); opacity: .8; }
+.btile[aria-selected="true"] .bt-k { color: var(--ai-ink); opacity: .26; }
+.boss-card {
+  min-width: 0; display: grid; gap: 14px; padding: 18px 16px 18px 18px; border-radius: 16px;
+  background-color: var(--surface); background-image: var(--washi); border: 1px solid var(--line); box-shadow: var(--shadow);
+}
+.boss-card h2 { margin: 0; font-family: var(--display); font-weight: 800; font-size: 1.3rem; line-height: 1.2; display: flex; align-items: center; gap: 10px; }
+.boss-card h2 .gk { font-family: var(--kanji); font-weight: 400; font-size: 30px; color: var(--ai); line-height: 1; }
+.boss-card ul { margin: 0; padding-left: 20px; display: grid; gap: 10px; }
+.boss-card li::marker { color: var(--ai); }
+.attempts { display: flex; align-items: center; gap: 10px; padding: 8px 8px 8px 14px; border-radius: 12px; background: var(--ai-soft); }
+.attempts span { flex: 1; font-size: 13.5px; color: var(--ink); line-height: 1.3; }
+.attempts span small { display: block; color: var(--muted); font-size: 12px; }
+.attempts b { font-family: var(--display); font-weight: 800; font-size: 1.7rem; min-width: 2ch; text-align: center; font-variant-numeric: lining-nums tabular-nums; line-height: 1; }
+.attempts button { min-width: 48px; min-height: 44px; border-radius: 10px; cursor: pointer; font-weight: 700; font-size: 16px; border: 1px solid var(--line-strong); background: var(--surface); }
+.attempts button.plus { background: var(--ai); color: var(--ai-ink); border-color: var(--ai); min-width: 56px; }
+.rel { display: flex; flex-wrap: wrap; gap: 8px; }
+.rel button { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; padding: 0 12px 0 8px; border-radius: 12px; border: 1px solid var(--line); background: var(--surface); cursor: pointer; font-size: 13.5px; font-weight: 500; }
+.rel .gs { width: 26px; height: 26px; font-size: 13px; }
+.phase-tabs { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 3px; padding: 3px; border-radius: 13px; background: var(--paper-2); border: 1px solid var(--line); }
+.phase-tabs button { min-height: 44px; border: 0; border-radius: 10px; background: transparent; cursor: pointer; font-weight: 600; font-size: 14px; color: var(--muted); }
+.phase-tabs button[aria-selected="true"] { background: var(--surface); color: var(--ai); box-shadow: 0 1px 2px rgba(15, 26, 54, .12), inset 0 0 0 1px var(--line); }
+.phase-panel { margin: 0; line-height: 1.6; }
+
+/* ---------- Bottom sheet ---------- */
+.sheet-root { position: fixed; inset: 0; z-index: 40; }
+.scrim { position: absolute; inset: 0; background: var(--scrim); opacity: 0; transition: opacity .28s; }
+.sheet {
+  position: absolute; left: 0; right: 0; bottom: 0; margin: 0 auto; max-width: 600px;
+  max-height: calc(100% - var(--top) - 26px); display: flex; flex-direction: column;
+  background-color: var(--surface); background-image: var(--washi);
+  border-radius: 22px 22px 0 0; box-shadow: var(--sheet-shadow);
+  padding-left: env(safe-area-inset-left, 0px); padding-right: env(safe-area-inset-right, 0px);
+  transform: translateY(105%); transition: transform .32s cubic-bezier(.2, .8, .2, 1);
+  outline: none;
+}
+.sheet-root.open .scrim { opacity: 1; }
+.sheet-root.open .sheet { transform: translateY(0); }
+.sheet.dragging { transition: none; }
+.sheet-grab { flex: none; position: relative; height: 40px; display: flex; justify-content: center; padding-top: 9px; touch-action: none; cursor: grab; }
+.handle { width: 42px; height: 5px; border-radius: 3px; background: var(--line-strong); }
+.x { position: absolute; right: 8px; top: 4px; width: 44px; height: 44px; display: grid; place-items: center; border-radius: 50%; border: 0; background: transparent; color: var(--muted); cursor: pointer; }
+.x svg { width: 22px; height: 22px; }
+.sheet-body { flex: 1 1 auto; min-height: 0; overflow-y: auto; overscroll-behavior: contain; -webkit-overflow-scrolling: touch; padding: 0 20px 18px; display: grid; gap: 16px; align-content: start; }
+.sheet-foot { flex: none; padding: 12px 20px calc(12px + var(--bottom)); border-top: 1px solid var(--line); background: var(--surface); }
+.card-hd { display: grid; grid-template-columns: 84px minmax(0, 1fr); gap: 16px; align-items: center; padding-right: 30px; }
+.hanko.hanko-lg { width: 84px; height: 84px; font-size: 40px; }
+.hanko.hanko-lg.g-p .hk { font-size: 26px; }
+.hanko.hanko-lg.on { border-radius: 14px; }
+.hanko.hanko-lg.on.psn { border-radius: 50%; }
+.hanko.hanko-lg:not(.on).g-p { color: var(--plat); border-color: var(--plat); }
+.hanko.hanko-lg:not(.on).g-g { color: var(--gold); border-color: var(--gold); }
+.hanko.hanko-lg:not(.on).g-s { color: var(--silver); border-color: var(--silver); }
+.hanko.hanko-lg:not(.on).g-b { color: var(--bronze); border-color: var(--bronze); }
+.card-tt { display: grid; gap: 3px; min-width: 0; }
+.card-grade { margin: 0; font-family: var(--mono); font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+.card-grade .on { color: var(--soul); font-weight: 600; }
+.card-tt h2 { margin: 0; font-family: var(--display); font-weight: 800; font-size: 1.45rem; line-height: 1.12; text-wrap: balance; overflow-wrap: anywhere; }
+.card-ru { margin: 0; font-size: 15px; color: var(--muted); }
+.card-d { margin: 0; font-size: 16px; line-height: 1.5; font-weight: 500; }
+.counter {
+  display: grid; grid-template-columns: 56px minmax(0, 1fr) 56px; gap: 12px; align-items: center;
+  padding: 12px; border-radius: 16px; background: var(--ai-soft); border: 1px solid var(--line);
+}
+.ctr-btn {
+  width: 56px; height: 56px; border-radius: 14px; cursor: pointer; font-size: 26px; font-weight: 600; line-height: 1;
+  border: 1px solid var(--line-strong); background: var(--surface); color: var(--ink); display: grid; place-items: center;
+}
+.ctr-btn.plus { background: var(--ai); border-color: var(--ai); color: var(--ai-ink); }
+.ctr-btn:disabled { opacity: .35; cursor: default; }
+.ctr-mid { display: grid; gap: 5px; justify-items: center; text-align: center; min-width: 0; }
+.ctr-lbl { font-family: var(--mono); font-size: 10.5px; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); }
+.ctr-val { font-family: var(--display); font-weight: 800; font-size: 1.35rem; line-height: 1; font-variant-numeric: lining-nums tabular-nums; color: var(--muted); }
+.ctr-val b { font-size: 1.6em; color: var(--ink); font-weight: 800; }
+.ctr-bar { width: 100%; height: 6px; border-radius: 3px; background: var(--surface); overflow: hidden; }
+.ctr-bar i { display: block; height: 100%; width: 0; background: var(--ai); border-radius: 3px; transition: width .3s; }
+.counter.full .ctr-bar i { background: var(--soul); }
+.ctr-note { font-size: 12.5px; color: var(--muted); line-height: 1.3; }
+.counter.full .ctr-note { color: var(--soul); font-weight: 600; }
+.card-tip { display: grid; gap: 6px; padding: 14px 16px; border-radius: 14px; background: var(--paper); border: 1px solid var(--line); }
+.card-tip h3 { margin: 0; font-family: var(--mono); font-size: 11px; font-weight: 500; letter-spacing: .14em; text-transform: uppercase; color: var(--ai); }
+.card-tip p { margin: 0; font-size: 15px; line-height: 1.6; }
+.card-rar { display: flex; align-items: center; gap: 10px; font-family: var(--mono); font-size: 12px; color: var(--muted); }
+.card-rar .rb { flex: none; width: 64px; height: 4px; border-radius: 2px; background: var(--line); overflow: hidden; }
+.card-rar .rb i { display: block; height: 100%; background: var(--soul); }
+.card-stage { display: flex; align-items: center; gap: 12px; width: 100%; min-height: 56px; padding: 8px 12px; text-align: left; border-radius: 14px; border: 1px solid var(--line); background: var(--surface); cursor: pointer; }
+.card-stage .gk { flex: none; width: 34px; text-align: center; font-family: var(--kanji); font-size: 28px; line-height: 1; color: var(--ai); }
+.card-stage span { flex: 1; min-width: 0; display: grid; font-weight: 600; font-size: 14.5px; }
+.card-stage small { font-weight: 400; font-size: 12.5px; color: var(--muted); }
+.big {
+  width: 100%; min-height: 54px; border-radius: 14px; cursor: pointer; font-size: 17px; font-weight: 700;
+  border: 1.5px solid var(--ai); background: var(--ai); color: var(--ai-ink);
+  display: flex; align-items: center; justify-content: center; gap: 10px;
+}
+.big .gk { font-family: var(--kanji); font-weight: 400; font-size: 22px; line-height: 1; }
+.big.undo { background: transparent; color: var(--ink); border-color: var(--line-strong); }
+.big:disabled { background: var(--soul-soft); color: var(--soul); border-color: var(--soul); cursor: default; opacity: 1; }
+
+/* ---------- Toast ---------- */
 .toast {
-  position: fixed; z-index: 10; left: 50%; transform: translateX(-50%);
-  bottom: calc(16px + env(safe-area-inset-bottom, 0px));
-  width: min(calc(100% - 32px), 520px);
-  display: flex; align-items: center; gap: 12px;
-  padding: 6px 6px 6px 18px; border-radius: 14px;
-  background: var(--toast); color: var(--toast-ink);
-  border: 1px solid rgba(238, 243, 252, .1);
-  box-shadow: 0 14px 36px -10px rgba(5, 10, 25, .55);
-  font-size: 14.5px;
+  position: fixed; z-index: 60; left: 50%; transform: translateX(-50%);
+  bottom: calc(var(--tab-h) + var(--bottom) + 10px);
+  width: min(calc(100% - 24px), 520px); display: flex; align-items: center; gap: 12px;
+  padding: 6px 6px 6px 16px; border-radius: 14px; background: var(--toast); color: var(--toast-ink);
+  border: 1px solid rgba(238, 243, 252, .1); box-shadow: 0 14px 36px -10px rgba(5, 10, 25, .55); font-size: 14.5px;
   animation: rise .22s cubic-bezier(.2, .7, .2, 1);
 }
+.toast.top { bottom: auto; top: calc(var(--top) + 10px); }
 @keyframes rise { from { opacity: 0; transform: translate(-50%, 10px); } to { opacity: 1; transform: translate(-50%, 0); } }
 .toast span { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.toast button {
-  flex: none; min-height: 44px; padding: 0 16px; border: 0; border-radius: 10px;
-  font: inherit; font-weight: 600; background: var(--glow); color: #06122A; cursor: pointer;
-}
+.toast button { flex: none; min-height: 44px; padding: 0 16px; border: 0; border-radius: 10px; font-weight: 700; background: var(--glow); color: #06122A; cursor: pointer; }
 
-/* ---------- Boss tips ---------- */
-.boss { display: grid; gap: 14px; }
-.sec-head { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 16px; align-items: center; margin-bottom: 4px; }
-.sec-k {
-  font-family: var(--kanji); font-size: 56px; line-height: 1;
-  width: 72px; height: 72px; display: grid; place-items: center; border-radius: 16px;
-  background: var(--hero); color: var(--hero-ink); border: 1px solid var(--hero-line);
+@media (max-width: 360px) {
+  .torii { width: 92px; height: 80px; }
+  .seal-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .stage-hero { grid-template-columns: 96px minmax(0, 1fr); }
+  .enso-big { width: 96px; height: 96px; }
+  .enso-k { font-size: 46px; }
 }
-.boss-card {
-  background: var(--surface); border: 1px solid var(--line); border-radius: 14px;
-  padding: 18px 20px; display: grid; gap: 10px; min-width: 0; box-shadow: var(--shadow);
-}
-.boss-card h3 { margin: 0; font-family: var(--display); font-weight: 800; font-size: 1.25rem; line-height: 1.2; }
-.boss-card ul { margin: 0; padding-left: 20px; display: grid; gap: 9px; }
-.boss-card li::marker { color: var(--ai); }
-.phase {
-  display: inline-block; font-family: var(--mono); font-size: 11px; font-weight: 500; letter-spacing: .08em; text-transform: uppercase;
-  color: var(--soul); background: var(--soul-soft); border-radius: 5px; padding: 0 7px; margin-right: 6px; line-height: 1.75; vertical-align: 1px;
-}
-
-.sources { display: grid; gap: 14px; }
-.sources ul { margin: 0; padding-left: 20px; display: grid; gap: 6px; font-size: 14.5px; }
-.sources li::marker { color: var(--muted); }
-footer { font-size: 13px; color: var(--muted); border-top: 1px solid var(--line); padding-top: 18px; }
-
-@media (max-width: 640px) {
-  .stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-}
-@media (max-width: 560px) {
-  :root { --gut-l: max(16px, env(safe-area-inset-left, 0px)); --gut-r: max(16px, env(safe-area-inset-right, 0px)); }
-  .hero { padding-top: calc(32px + env(safe-area-inset-top, 0px)); padding-bottom: 28px; }
-  .wrap { gap: 40px; }
-  .stat { padding: 12px 14px 13px; }
-  .stat b { font-size: 1.4rem; }
-  .stage { padding-block: 34px; gap: 18px; }
-  .stage-head { grid-template-columns: 60px minmax(0, 1fr); gap: 14px; }
-  .kanji { width: 60px; height: 60px; }
-  .kanji span { font-size: 28px; }
-  .stage h2 { font-size: 1.35rem; }
-  .sec-k { width: 60px; height: 60px; font-size: 46px; border-radius: 14px; }
-  .trophy { grid-template-columns: 44px auto minmax(0, 1fr); gap: 0 9px; padding-right: 14px; }
-  .note { padding: 14px 16px 15px 18px; }
-  .boss-card { padding: 16px 16px 16px 18px; }
+@media (min-width: 640px) {
+  .seal-grid { grid-template-columns: repeat(6, minmax(0, 1fr)); }
 }
 @media (prefers-reduced-motion: reduce) {
-  .bar > div, .enso-fill, .jump a::after, .trophy, .box { transition: none; }
-  .bar > div::after, .toast { animation: none; }
+  *, *::before, *::after { animation: none !important; transition: none !important; }
 }
 </style>
 </head>
 <body>
-<header class="hero">
-  <div class="hero-mark" aria-hidden="true"><span>鬼</span></div>
-  <div class="hero-in">
-    <div class="eyebrow">PS5 · Платиновый трофей «Непобедимый»</div>
-    <h1><span class="game">Onimusha: Way of the Sword</span> <span class="goal">путь к платине</span></h1>
-    <p class="lede">План в пять этапов, собранный из всех подсказок и комментариев к трофеям на Stratege и сверенный с roadmap PowerPyx. Полученные трофеи подтягиваются из PSN при сверке, а между сверками их можно отмечать вручную.</p>
-    <div class="progress">
-      <div class="progress-row"><span><span class="soul-k" aria-hidden="true">魂</span>Ваш прогресс</span><b id="total">0 / 52</b></div>
-      <div class="bar"><div id="totalbar"></div></div>
-    </div>
-  </div>
-</header>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <defs>
+    <radialGradient id="flameGrad" cx="50%" cy="68%" r="62%">
+      <stop offset="0" stop-color="#FFFFFF"/><stop offset=".42" stop-color="#A6E6FF"/><stop offset="1" stop-color="#3D7BFF"/>
+    </radialGradient>
+  </defs>
+</svg>
 
-<div class="wrap">
-  <div class="dash">
-    <div class="stats">
-      <div class="stat"><b>52</b><span class="grades"><i><span class="dot g-p"></span>1</i><i><span class="dot g-g"></span>2</i><i><span class="dot g-s"></span>9</i><i><span class="dot g-b"></span>40</i></span></div>
-      <div class="stat"><b>2</b><span>прохождения минимум: «Экшен», затем НГ+ на «Резне»</span></div>
-      <div class="stat"><b>~71 ч</b><span>среднее время платины на Stratege (PowerPyx: 60–70 ч)</span></div>
-      <div class="stat"><b>7–8/10</b><span>типичная оценка сложности в комментариях</span></div>
-    </div>
-    <div class="tools">
-      <button class="btn" id="hide" type="button" aria-pressed="false">Скрыть полученные</button>
-      <button class="btn danger" id="reset" type="button">Сбросить ручные отметки</button>
-      <span class="sync" id="sync">Загружаю данные PSN…</span>
-    </div>
-    <div class="legend">
-      <span><span class="box psn"></span>получен по данным PSN</span>
-      <span><span class="box man"></span>отмечен вручную</span>
-    </div>
-  </div>
+<div id="app">
+<main class="app">
 
-  <div class="topbar" id="topbar">
-    <div class="bar-row">
+  <!-- ============ 道 Путь ============ -->
+  <section class="view" id="v-path" role="tabpanel" aria-labelledby="tab-path">
+    <header class="path-hd">
+      <div class="hd-mark" aria-hidden="true"><span>道</span></div>
+      <div class="hd-top">
+        <p class="eyebrow">Onimusha: Way of the Sword · PS5</p>
+        <button class="icon-btn" id="themeBtn" type="button" aria-label="Тема: как в системе">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M12 3.5a8.5 8.5 0 0 1 0 17Z" fill="currentColor" stroke="none"/></svg>
+        </button>
+      </div>
+      <h1 id="pathTitle" tabindex="-1">Путь к платине</h1>
+      <div class="prog">
+        <span class="prog-k" aria-hidden="true">魂</span>
+        <div class="prog-row"><span>Трофеи «Непобедимого»</span><b><span id="tot">0</span><small> / 52</small></b></div>
+        <div class="bar" aria-hidden="true"><i id="totBar"></i></div>
+        <p class="sync off" id="sync" role="status" aria-live="polite">Загружаю данные PSN…</p>
+      </div>
+    </header>
+
+    <nav class="road-wrap" id="roadWrap" aria-label="Пять врат: этапы платины">
+      <svg class="road-svg" id="roadSvg" aria-hidden="true" focusable="false"></svg>
+      <ol class="road" id="road"></ol>
+    </nav>
+
+    <div class="scrolls">
+      <details class="scroll" id="rules" data-scroll="rules">
+        <summary><span class="sk" aria-hidden="true">掟</span><span class="st">Правила пути<small>что важно знать до старта, перенос в НГ+</small></span><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></summary>
+        <div class="scroll-body">
+          <div class="facts">
+            <div class="fact"><b>52</b><span class="grades"><i><span class="dot d-p"></span>1</i><i><span class="dot d-g"></span>2</i><i><span class="dot d-s"></span>9</i><i><span class="dot d-b"></span>40</i></span></div>
+            <div class="fact"><b>2</b><span>прохождения минимум: «Экшен», затем НГ+ на «Резне»</span></div>
+            <div class="fact"><b>~71 ч</b><span>среднее время платины на Stratege (PowerPyx: 60–70 ч)</span></div>
+            <div class="fact"><b>7–8/10</b><span>типичная оценка сложности в комментариях</span></div>
+          </div>
+          <h3 class="sub-h">Что важно знать до старта</h3>
+          <ul class="keyrules">
+            <li><b>Пропускаемых трофеев нет.</b> Точка невозврата — начало финальной миссии «The Clash at Rendaino» (Рэндайно). После титров «Продолжить» возвращает вас прямо перед ней, так что всё можно доделать.</li>
+            <li><b>«Резня» открывается только после первых титров</b> и выбирается при старте НГ+. Отдельных трофеев за низкие сложности нет, поэтому первое прохождение можно играть на любой.</li>
+            <li><b>На «Резне» нет экранных подсказок действий.</b> Выключите их в настройках уже на «Экшене» и учитесь читать атаки сами, особенно под иссен.</li>
+            <li><b>Зеркала воскрешения и лечилки</b> в первом прохождении лучше копить: расходники переносятся в НГ+ и пригодятся на «Резне».</li>
+            <li>Сохранений: 1 автосейв и 20 ручных слотов. Делайте ручное сохранение перед финальной миссией и перед дорогой прокачкой.</li>
+          </ul>
+          <div class="carry">
+            <div class="yes">
+              <h3>Переносится в НГ+</h3>
+              <ul>
+                <li>Базовые и особые навыки, способности Они</li>
+                <li>Мешочки с ходзуки и их улучшения</li>
+                <li>Амулеты и их улучшения</li>
+                <li>Предметы и расходники (без материалов)</li>
+                <li>Заметки о гэмма, спасённые комаину</li>
+              </ul>
+            </div>
+            <div class="no">
+              <h3>Не переносится</h3>
+              <ul>
+                <li>Улучшения одежды, меча и перчатки</li>
+                <li>Материалы для улучшений и красные души</li>
+                <li>Тайны Киото и Случайные встречи</li>
+                <li>Открытые Зеркала Духов</li>
+              </ul>
+            </div>
+          </div>
+          <p class="src">Списки переноса — PowerPyx; подтверждено подсказками Rarog, ole-x, mitri, Densaw95 на Stratege.</p>
+        </div>
+      </details>
+
+      <details class="scroll" id="marks" data-scroll="marks">
+        <summary><span class="sk" aria-hidden="true">録</span><span class="st">Отметки<small>PSN и ручные, сброс</small></span><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></summary>
+        <div class="scroll-body">
+          <div class="legend">
+            <span><span class="box psn" aria-hidden="true"></span>круглая — получен по данным PSN, снять нельзя</span>
+            <span><span class="box man" aria-hidden="true"></span>квадратная — отмечен вручную на этом устройстве</span>
+          </div>
+          <p class="src">Отметки, задачи этапов, счётчики и попытки хранятся только в этом браузере. Сверка с PSN подтягивается из файла progress.json при открытии и при возврате в приложение.</p>
+          <button class="btn danger" id="reset" type="button">Сбросить ручные отметки</button>
+        </div>
+      </details>
+
+      <details class="scroll" id="sources" data-scroll="sources">
+        <summary><span class="sk" aria-hidden="true">典</span><span class="st">Источники<small>Stratege, PowerPyx, AllThings.How</small></span><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></summary>
+        <div class="scroll-body">
+          <p class="src" style="font-family:var(--body);font-size:14px">План в пять этапов, собранный из всех подсказок и комментариев к трофеям на Stratege и сверенный с roadmap PowerPyx. Полученные трофеи подтягиваются из PSN при сверке, а между сверками их можно отмечать вручную.</p>
+          <ul class="sources">
+            <li><a href="https://stratege.ru/ps5/games/onimusha_way_of_the_sword/trophies" target="_blank" rel="noopener">Stratege — трофеи, подсказки и дополнения</a></li>
+            <li><a href="https://stratege.ru/ps5/games/onimusha_way_of_the_sword/difficulty" target="_blank" rel="noopener">Stratege — 36 комментариев к оценке сложности</a></li>
+            <li><a href="https://powerpyx.com/onimusha-way-of-the-sword-trophy-guide-roadmap" target="_blank" rel="noopener">PowerPyx — Trophy Guide &amp; Roadmap (en)</a></li>
+            <li><a href="https://www.powerpyx.com/onimusha-way-of-the-sword-boss-guide-carnage-difficulty/" target="_blank" rel="noopener">PowerPyx — боссы на «Резне» (en)</a></li>
+            <li><a href="https://www.powerpyx.com/onimusha-way-of-the-sword-collectible-guide/" target="_blank" rel="noopener">PowerPyx — гайд по коллекционным предметам (en)</a></li>
+            <li><a href="https://allthings.how/onimusha-way-of-the-sword-all-genma-notes-locations-guide/" target="_blank" rel="noopener">AllThings.How — все заметки о гэмма (en)</a></li>
+            <li><a href="https://allthings.how/onimusha-way-of-the-sword-every-oni-stone-location-54-total/" target="_blank" rel="noopener">AllThings.How — все 54 камня Они (en)</a></li>
+          </ul>
+          <p class="src">Данные на 14.10.2026. «Получили N%» — доля игроков PSN с этим трофеем. Ники в советах — авторы подсказок на Stratege.</p>
+        </div>
+      </details>
+    </div>
+  </section>
+
+  <!-- ============ Этап ============ -->
+  <section class="view" id="v-stage" role="tabpanel" aria-labelledby="tab-path" hidden>
+    <div class="stage-bar">
+      <button class="back" id="back" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="m15 5-7 7 7 7"/></svg>К пути</button>
+      <span class="stage-nav">
+        <button type="button" id="prevStage" aria-label="Предыдущий этап"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="m15 5-7 7 7 7"/></svg></button>
+        <span id="stageNo">1 / 5</span>
+        <button type="button" id="nextStage" aria-label="Следующий этап"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="m9 5 7 7-7 7"/></svg></button>
+      </span>
+    </div>
+    <header class="stage-hero" id="stHero">
+      <div class="enso-big" aria-hidden="true">
+        <svg class="enso" viewBox="0 0 120 120"><circle class="enso-track" cx="60" cy="60" r="52" stroke-dasharray="300 400"/><circle class="enso-fill" id="ensoFill" cx="60" cy="60" r="52" stroke-dasharray="0 400"/></svg>
+        <span class="enso-k" id="stK">一</span>
+      </div>
+      <div class="stage-titles">
+        <p class="eyebrow" id="stMeta">Этап 1 · ~35–45 ч</p>
+        <h1 id="stTitle" tabindex="-1"></h1>
+        <p class="stage-sum" id="stSum"></p>
+      </div>
+    </header>
+
+    <div class="scrolls">
+      <details class="scroll" data-scroll="tasks" id="scTasks">
+        <summary><span class="sk" aria-hidden="true">行</span><span class="st">Что сделать</span><span class="sc" id="tasksCount"></span><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></summary>
+        <div class="scroll-body"><ul class="tasks" id="tasksList"></ul></div>
+      </details>
+      <details class="scroll" data-scroll="trophies" id="scTrophies">
+        <summary><span class="sk" aria-hidden="true">賞</span><span class="st">Трофеи</span><span class="sc" id="trophCount"></span><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></summary>
+        <div class="scroll-body">
+          <div class="tool-row"><button class="chip" id="hideBtn" type="button" aria-pressed="false">Скрыть полученные</button></div>
+          <div id="stGroups"></div>
+        </div>
+      </details>
+      <details class="scroll" data-scroll="notes" id="scNotes">
+        <summary><span class="sk" aria-hidden="true">書</span><span class="st">Советы</span><span class="sc" id="notesCount"></span><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></summary>
+        <div class="scroll-body" id="stNotes"></div>
+      </details>
+    </div>
+    <button class="next-gate" id="nextGate" type="button"></button>
+  </section>
+
+  <!-- ============ 探 Поиск ============ -->
+  <section class="view" id="v-search" role="tabpanel" aria-labelledby="tab-search" hidden>
+    <div class="search-top">
       <div class="search" role="search">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5 21 21"/></svg>
-        <input type="search" id="q" placeholder="Найти трофей" autocomplete="off" enterkeyhint="search" aria-label="Найти трофей">
+        <input type="search" id="q" placeholder="Трофей, босс, слово из описания" autocomplete="off" autocorrect="off" spellcheck="false" enterkeyhint="search" aria-label="Найти трофей">
         <button type="button" id="qclear" aria-label="Очистить поиск" hidden>×</button>
       </div>
-      <button class="chip-btn" id="compact" type="button" aria-pressed="false" aria-label="Краткий вид: советы открываются касанием">Кратко</button>
-      <button class="chip-btn" id="hide2" type="button" aria-pressed="false" aria-label="Скрыть полученные трофеи">Скрыть ✓</button>
     </div>
-    <nav class="jump" aria-label="Этапы">
-      <a href="#stage-1" data-jump="0"><b>一</b><small>0/0</small></a>
-      <a href="#stage-2" data-jump="1"><b>二</b><small>0/0</small></a>
-      <a href="#stage-3" data-jump="2"><b>三</b><small>0/0</small></a>
-      <a href="#stage-4" data-jump="3"><b>四</b><small>0/0</small></a>
-      <a href="#stage-5" data-jump="4"><b>五</b><small>0/0</small></a>
-      <a href="#carnage" data-jump="boss" aria-label="Как пройти «Резню»: советы по боссам"><b>鬼</b><small>боссы</small></a>
-    </nav>
+    <h1 class="sr" id="searchTitle" tabindex="-1">Поиск трофеев</h1>
+    <div class="filters" id="sFilters">
+      <div class="chip-row">
+        <button class="chip" type="button" data-sf="todo" aria-pressed="false">Не получены</button>
+        <button class="chip" type="button" data-sf="ctr" aria-pressed="false">Со счётчиком</button>
+      </div>
+      <div class="seg" role="group" aria-label="Этап">
+        <button type="button" data-sf-stage="0" aria-pressed="false" aria-label="Этап 1"><span class="k">一</span></button>
+        <button type="button" data-sf-stage="1" aria-pressed="false" aria-label="Этап 2"><span class="k">二</span></button>
+        <button type="button" data-sf-stage="2" aria-pressed="false" aria-label="Этап 3"><span class="k">三</span></button>
+        <button type="button" data-sf-stage="3" aria-pressed="false" aria-label="Этап 4"><span class="k">四</span></button>
+        <button type="button" data-sf-stage="4" aria-pressed="false" aria-label="Этап 5"><span class="k">五</span></button>
+      </div>
+      <div class="seg" role="group" aria-label="Грейд">
+        <button type="button" data-sf-grade="p" aria-pressed="false">Платина</button>
+        <button type="button" data-sf-grade="g" aria-pressed="false">Золото</button>
+        <button type="button" data-sf-grade="s" aria-pressed="false">Серебро</button>
+        <button type="button" data-sf-grade="b" aria-pressed="false">Бронза</button>
+      </div>
+    </div>
+    <p class="qstatus" id="qstatus" aria-live="polite"></p>
+    <div class="list" id="results" data-hide-done="0" hidden></div>
+    <div class="hints" id="hints">
+      <p>Ищите по названию на английском или русском, по имени босса или по слову из описания. Фильтры работают и без запроса.</p>
+      <div class="hint-chips">
+        <button class="chip" type="button" data-q="Ганрю">Ганрю</button>
+        <button class="chip" type="button" data-q="иссен">иссен</button>
+        <button class="chip" type="button" data-q="комаину">комаину</button>
+        <button class="chip" type="button" data-q="тайн">тайны Киото</button>
+        <button class="chip" type="button" data-q="реванш">реванш</button>
+        <button class="chip" type="button" data-q="лук">лук</button>
+        <button class="chip" type="button" data-q="улучшите">улучшения</button>
+        <button class="chip" type="button" data-q="Бэнкэ">Бэнкэй</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 鬼 Боссы ============ -->
+  <section class="view" id="v-bosses" role="tabpanel" aria-labelledby="tab-bosses" hidden>
+    <header class="view-hd">
+      <span class="hd-seal" aria-hidden="true">鬼</span>
+      <div><p class="eyebrow">Боссы</p><h1 id="bossTitle" tabindex="-1">Как пройти «Резню» и реванш</h1></div>
+    </header>
+    <div class="boss-tiles" role="tablist" aria-label="Карточки боссов">
+      <button class="btile" type="button" role="tab" id="bt-general" data-boss="general" aria-controls="boss-general"><span class="bt-k" aria-hidden="true">心</span><b>Общие советы</b><small>10 советов</small></button>
+      <button class="btile" type="button" role="tab" id="bt-ganryu" data-boss="ganryu" aria-controls="boss-ganryu"><span class="bt-k" aria-hidden="true">巌</span><b>Сасаки Ганрю</b><small data-att-label="ganryu">попыток: 0</small></button>
+      <button class="btile" type="button" role="tab" id="bt-yoshitsune" data-boss="yoshitsune" aria-controls="boss-yoshitsune"><span class="bt-k" aria-hidden="true">義</span><b>Минамото-но Ёсицунэ</b><small data-att-label="yoshitsune">попыток: 0</small></button>
+      <button class="btile" type="button" role="tab" id="bt-rematch" data-boss="rematch" aria-controls="boss-rematch"><span class="bt-k" aria-hidden="true">再</span><b>Реванш с боссами</b><small>18 боссов</small></button>
+    </div>
+
+    <article class="boss-card" id="boss-general" role="tabpanel" aria-labelledby="bt-general">
+      <h2><span class="gk" aria-hidden="true">心</span>Общие советы</h2>
+      <ul>
+        <li>Учите <b>иссен</b> как можно раньше: у многих атак боссов широкие окна, и бой идёт в разы быстрее. Если тайминг не даётся, берите <b>«Отражение» (L1 + X)</b>: бои дольше, но риск ниже. <span class="who">DSnaNo, samogon</span></li>
+        <li>Отточите <b>рефлекс-уворот</b>: он открывает окно для комбо. <span class="who">Avant_Time</span></li>
+        <li>Выберите тип парирования: воспламеняющее или сбивающее концентрацию. Если редко пользуетесь оружием Они, берите второе. <span class="who">Avant_Time</span></li>
+        <li>Пропустили пару ударов? На критической атаке босса выбирайте <b>фиолетовую зону</b>: она восполняет здоровье, ману и пробуждение и оттягивает усиление босса. <span class="who">Avant_Time</span></li>
+        <li>Лучшие амулеты: +10% к урону иссена, ускорение шкалы пробуждения и шкалы рефлексов. В сюжете не стесняйтесь расходников на урон. <span class="who">Avant_Time</span></li>
+        <li>Не давите сильных врагов вслепую: делайте паузы, а в момент их блок-стойки пробивайте защиту мощью колонн. <span class="who">Avant_Time</span></li>
+        <li>Захваты Ганрю и Ёсицунэ с дистанции читайте по анимации входа в захват, а не по началу атаки. <span class="who">Avant_Time</span></li>
+        <li>К близнецам Ифуу и Бураю советуют приходить с прокачкой снаряжения 5/5/5 и не использовать захват цели, пока живы оба. Это рекомендация, а не условие: некоторые прошли «Резню» с прокачкой 2–3. <span class="who">Avant_Time, Black_Nero, Joker_xD, Fylex</span></li>
+        <li>Застряли на боссе — запустите его в реванше на лёгкой сложности и разучите мувсет. <span class="who">Black_Nero</span></li>
+        <li>Включите игровой режим на ТВ: задержка отклика ломает тайминги. Некоторые советуют режим 30 fps для иссена, но это не подтверждено. <span class="who">qualmz, Ash666</span></li>
+      </ul>
+      <div class="rel"><button type="button" data-open="true_onimusha"><span class="gs g-g" aria-hidden="true">金</span>True Onimusha</button></div>
+    </article>
+
+    <article class="boss-card" id="boss-ganryu" role="tabpanel" aria-labelledby="bt-ganryu" hidden>
+      <h2><span class="gk" aria-hidden="true">巌</span>Сасаки Ганрю</h2>
+      <div class="attempts" data-att-box="ganryu">
+        <span>Попытки<small>на этом устройстве</small></span>
+        <button type="button" data-att="ganryu" data-d="-1" aria-label="Минус одна попытка">−</button>
+        <b data-att-val="ganryu" aria-live="polite">0</b>
+        <button type="button" class="plus" data-att="ganryu" data-d="1" aria-label="Плюс одна попытка">+1</button>
+      </div>
+      <ul>
+        <li>По комментариям, самый неприятный босс: пара плохо читаемых атак и захват, который виден только по блеску у него за спиной. На «Резне» на него уходит от часа до полутора. <span class="who">banick, MefbI4, Densaw95</span></li>
+        <li>Минимум три его атаки стабильно контрятся иссеном — найдите их в тренировке. <span class="who">samogon</span></li>
+        <li>Первая фаза: парируйте, наказывайте лёгкими атаками, сбивайте выносливость и бейте иссен по красной метке. Вторая: уклоняйтесь от пинков, парируйте меч, контрите захваты. <span class="who">PowerPyx</span></li>
+      </ul>
+      <div class="rel">
+        <button type="button" data-open="showdown"><span class="gs g-b" aria-hidden="true">銅</span>Onimusha Showdown</button>
+        <button type="button" data-open="done_here"><span class="gs g-b" aria-hidden="true">銅</span>We Done Here?</button>
+      </div>
+    </article>
+
+    <article class="boss-card" id="boss-yoshitsune" role="tabpanel" aria-labelledby="bt-yoshitsune" hidden>
+      <h2><span class="gk" aria-hidden="true">義</span>Минамото-но Ёсицунэ</h2>
+      <div class="attempts" data-att-box="yoshitsune">
+        <span>Попытки<small>на этом устройстве</small></span>
+        <button type="button" data-att="yoshitsune" data-d="-1" aria-label="Минус одна попытка">−</button>
+        <b data-att-val="yoshitsune" aria-live="polite">0</b>
+        <button type="button" class="plus" data-att="yoshitsune" data-d="1" aria-label="Плюс одна попытка">+1</button>
+      </div>
+      <p class="phase-panel">Возьмите по два каждого расходника и берегите их до конца второй и третьей фазы. PowerPyx советует Amulet of Introspection, Stimulant, Sun-Dried Hozuki и оба Greater Talisman. На бой уходило от 1 до 14 часов, будьте готовы. <span class="who">PowerPyx; nikemad, Black_Nero</span></p>
+      <div class="phase-tabs" role="tablist" aria-label="Фазы боя">
+        <button type="button" role="tab" id="ph-1" data-phase="1" aria-controls="php-1" aria-selected="true">Фаза 1</button>
+        <button type="button" role="tab" id="ph-2" data-phase="2" aria-controls="php-2" aria-selected="false" tabindex="-1">Фаза 2</button>
+        <button type="button" role="tab" id="ph-3" data-phase="3" aria-controls="php-3" aria-selected="false" tabindex="-1">Фаза 3</button>
+      </div>
+      <p class="phase-panel" id="php-1" role="tabpanel" aria-labelledby="ph-1">Если он вас схватил, лучше перезапустить бой: дальше он станет заметно сложнее. Тычок плечом — это сигнал: парируйте следующий за ним выпад с рывком. От трёх белых ударов с дистанции уклоняйтесь. <span class="who">Black_Nero, PowerPyx</span></p>
+      <p class="phase-panel" id="php-2" role="tabpanel" aria-labelledby="ph-2" hidden>Самая неприятная. Начинается с вертикального двойного удара в прыжке. Колоннами сбейте ему броню, но только в коротком стане, когда он спиной к вам или на колене. Пока броня цела, отражение надёжнее иссена: она режет урон. После двух дальних розовых ударов идёт атака-вспышка с телепортом: уворот, уворот, затем блок в правильный момент. Стрелы отбиваются в него. Захват здесь идёт через телепорт, ориентируйтесь на взмах руки. <span class="who">Avant_Time, PowerPyx</span></p>
+      <p class="phase-panel" id="php-3" role="tabpanel" aria-labelledby="ph-3" hidden>Урон проходит только в пробуждении Они, поэтому почти весь бой ведите в форме Они на иссенах и рефлекс-комбо. Добивание R1 не жмите сразу после превращения: тратьте его, когда шкала пробуждения почти пуста. Круговая атака со всасыванием душ: иссен ближе к концу оборота, когда меч примерно на «2 часа», или через ~2 секунды после «приготовься» от Сидзуки. Если не успеваете, бейте молотами, пока он готовится, а не тратьте способность оружия. Ещё вариант — «Тихая вода»: собирает фиолетовые души и позволяет уйти от круговой атаки. <span class="who">Avant_Time, GODZILA3030, DSnaNo, PowerPyx</span></p>
+      <div class="rel"><button type="button" data-open="thank_you"><span class="gs g-b" aria-hidden="true">銅</span>Truly, Thank You</button></div>
+    </article>
+
+    <article class="boss-card" id="boss-rematch" role="tabpanel" aria-labelledby="bt-rematch" hidden>
+      <h2><span class="gk" aria-hidden="true">再</span>Реванш с боссами</h2>
+      <ul>
+        <li>В реванше 18 боссов — больше, чем сюжетных трофеев за боссов. Сложность «Резня» для босса открывается только после победы над ним на «Резне» в сюжете. Победа на высшей сложности засчитывает все нижние. <span class="who">Joker_xD, cyrax</span></li>
+        <li>Расходники в реванше недоступны. <span class="who">PowerPyx, Black_Nero</span></li>
+        <li>Обычно советуют идти в реванш после «Резни» с мечом «Бисямон», наградой за неё: с ним окно иссена такое же, как в форме Они, без трансформации. <span class="who">Hiten_Mitsurugi_Ryu, Black_Nero, Avant_Time</span></li>
+        <li>Не полагайтесь только на меч: условия в реванше немного отличаются от сюжета. Выучите 2–3 атаки каждого босса под иссен. <span class="who">Tusky</span></li>
+        <li>Альтернатива: проходите реванш сразу после победы над боссом на «Резне», пока помните его удары. Особенно Ганрю. <span class="who">Agrial-A</span></li>
+      </ul>
+      <div class="rel">
+        <button type="button" data-open="glutton"><span class="gs g-g" aria-hidden="true">金</span>Glutton for Punishment</button>
+        <button type="button" data-open="second"><span class="gs g-b" aria-hidden="true">銅</span>Second Helping</button>
+      </div>
+    </article>
+  </section>
+
+  <!-- ============ 魂 Печати ============ -->
+  <section class="view" id="v-seals" role="tabpanel" aria-labelledby="tab-seals" hidden>
+    <header class="view-hd">
+      <span class="hd-seal" aria-hidden="true">魂</span>
+      <div><p class="eyebrow">Печати</p><h1 id="sealTitle" tabindex="-1">Собрание печатей</h1></div>
+    </header>
+    <p class="seal-sum" id="sealSum"></p>
+    <div class="filters">
+      <div class="seg" role="group" aria-label="Статус">
+        <button type="button" data-se="status" data-v="all">Все</button>
+        <button type="button" data-se="status" data-v="todo">Не получены</button>
+        <button type="button" data-se="status" data-v="done">Получены</button>
+      </div>
+      <div class="seg" role="group" aria-label="Грейд">
+        <button type="button" data-se="grade" data-v="all">Все</button>
+        <button type="button" data-se="grade" data-v="p" aria-label="Платина"><span class="k">白</span></button>
+        <button type="button" data-se="grade" data-v="g" aria-label="Золото"><span class="k">金</span></button>
+        <button type="button" data-se="grade" data-v="s" aria-label="Серебро"><span class="k">銀</span></button>
+        <button type="button" data-se="grade" data-v="b" aria-label="Бронза"><span class="k">銅</span></button>
+      </div>
+      <div class="seg" role="group" aria-label="Этап">
+        <button type="button" data-se="stage" data-v="all">Все</button>
+        <button type="button" data-se="stage" data-v="0" aria-label="Этап 1"><span class="k">一</span></button>
+        <button type="button" data-se="stage" data-v="1" aria-label="Этап 2"><span class="k">二</span></button>
+        <button type="button" data-se="stage" data-v="2" aria-label="Этап 3"><span class="k">三</span></button>
+        <button type="button" data-se="stage" data-v="3" aria-label="Этап 4"><span class="k">四</span></button>
+        <button type="button" data-se="stage" data-v="4" aria-label="Этап 5"><span class="k">五</span></button>
+      </div>
+    </div>
+    <div class="seal-grid" id="sealGrid"></div>
+    <div class="seal-legend">
+      <span><i class="lg psn" aria-hidden="true"></i>PSN</span>
+      <span><i class="lg man" aria-hidden="true"></i>вручную</span>
+      <span><i class="lg no" aria-hidden="true"></i>не получен</span>
+    </div>
+  </section>
+</main>
+
+<nav class="tabbar" aria-label="Разделы">
+  <div class="tabbar-in" role="tablist" aria-label="Разделы">
+    <button class="tab" type="button" role="tab" id="tab-path" data-tab="path" aria-controls="v-path" aria-selected="true"><span class="tab-k" aria-hidden="true">道</span><span class="tab-l">Путь</span></button>
+    <button class="tab" type="button" role="tab" id="tab-search" data-tab="search" aria-controls="v-search" aria-selected="false" tabindex="-1"><span class="tab-k" aria-hidden="true">探</span><span class="tab-l">Поиск</span></button>
+    <button class="tab" type="button" role="tab" id="tab-bosses" data-tab="bosses" aria-controls="v-bosses" aria-selected="false" tabindex="-1"><span class="tab-k" aria-hidden="true">鬼</span><span class="tab-l">Боссы</span></button>
+    <button class="tab" type="button" role="tab" id="tab-seals" data-tab="seals" aria-controls="v-seals" aria-selected="false" tabindex="-1"><span class="tab-k" aria-hidden="true">魂</span><span class="tab-l">Печати</span></button>
   </div>
-  <p class="qstatus" id="qstatus" aria-live="polite" hidden></p>
+</nav>
+</div>
 
-  <section class="rules">
-    <h2>Что важно знать до старта</h2>
-    <ul class="keyrules">
-      <li><b>Пропускаемых трофеев нет.</b> Точка невозврата — начало финальной миссии «The Clash at Rendaino» (Рэндайно). После титров «Продолжить» возвращает вас прямо перед ней, так что всё можно доделать.</li>
-      <li><b>«Резня» открывается только после первых титров</b> и выбирается при старте НГ+. Отдельных трофеев за низкие сложности нет, поэтому первое прохождение можно играть на любой.</li>
-      <li><b>На «Резне» нет экранных подсказок действий.</b> Выключите их в настройках уже на «Экшене» и учитесь читать атаки сами, особенно под иссен.</li>
-      <li><b>Зеркала воскрешения и лечилки</b> в первом прохождении лучше копить: расходники переносятся в НГ+ и пригодятся на «Резне».</li>
-      <li>Сохранений: 1 автосейв и 20 ручных слотов. Делайте ручное сохранение перед финальной миссией и перед дорогой прокачкой.</li>
-    </ul>
-    <div class="carry">
-      <div class="yes">
-        <h3>Переносится в НГ+</h3>
-        <ul>
-          <li>Базовые и особые навыки, способности Они</li>
-          <li>Мешочки с ходзуки и их улучшения</li>
-          <li>Амулеты и их улучшения</li>
-          <li>Предметы и расходники (без материалов)</li>
-          <li>Заметки о гэмма, спасённые комаину</li>
-        </ul>
-      </div>
-      <div class="no">
-        <h3>Не переносится</h3>
-        <ul>
-          <li>Улучшения одежды, меча и перчатки</li>
-          <li>Материалы для улучшений и красные души</li>
-          <li>Тайны Киото и Случайные встречи</li>
-          <li>Открытые Зеркала Духов</li>
-        </ul>
-      </div>
+<div class="sheet-root" id="sheetRoot" hidden>
+  <div class="scrim" id="scrim"></div>
+  <div class="sheet" id="sheet" role="dialog" aria-modal="true" aria-labelledby="shTitle" tabindex="-1">
+    <div class="sheet-grab" id="sheetGrab"><span class="handle" aria-hidden="true"></span>
+      <button class="x" id="shClose" type="button" aria-label="Закрыть карточку"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
     </div>
-    <p class="src">Списки переноса — PowerPyx; подтверждено подсказками Rarog, ole-x, mitri, Densaw95 на Stratege.</p>
-  </section>
-
-  <div class="timeline" id="timeline"></div>
-
-  <section class="boss" id="carnage">
-    <div class="sec-head"><span class="sec-k" aria-hidden="true">鬼</span><h2 class="section-title">Как пройти «Резню» и реванш</h2></div>
-    <div class="boss-card">
-      <h3>Общие советы</h3>
-      <ul>
-        <li>Учите <b>иссен</b> как можно раньше: у многих атак боссов широкие окна, и бой идёт в разы быстрее. Если тайминг не даётся, берите <b>«Отражение» (L1 + X)</b>: бои дольше, но риск ниже. <span class="who src">DSnaNo, samogon</span></li>
-        <li>Отточите <b>рефлекс-уворот</b>: он открывает окно для комбо. <span class="who src">Avant_Time</span></li>
-        <li>Выберите тип парирования: воспламеняющее или сбивающее концентрацию. Если редко пользуетесь оружием Они, берите второе. <span class="who src">Avant_Time</span></li>
-        <li>Пропустили пару ударов? На критической атаке босса выбирайте <b>фиолетовую зону</b>: она восполняет здоровье, ману и пробуждение и оттягивает усиление босса. <span class="who src">Avant_Time</span></li>
-        <li>Лучшие амулеты: +10% к урону иссена, ускорение шкалы пробуждения и шкалы рефлексов. В сюжете не стесняйтесь расходников на урон. <span class="who src">Avant_Time</span></li>
-        <li>Не давите сильных врагов вслепую: делайте паузы, а в момент их блок-стойки пробивайте защиту мощью колонн. <span class="who src">Avant_Time</span></li>
-        <li>Захваты Ганрю и Ёсицунэ с дистанции читайте по анимации входа в захват, а не по началу атаки. <span class="who src">Avant_Time</span></li>
-        <li>К близнецам Ифуу и Бураю советуют приходить с прокачкой снаряжения 5/5/5 и не использовать захват цели, пока живы оба. Это рекомендация, а не условие: некоторые прошли «Резню» с прокачкой 2–3. <span class="who src">Avant_Time, Black_Nero, Joker_xD, Fylex</span></li>
-        <li>Застряли на боссе — запустите его в реванше на лёгкой сложности и разучите мувсет. <span class="who src">Black_Nero</span></li>
-        <li>Включите игровой режим на ТВ: задержка отклика ломает тайминги. Некоторые советуют режим 30 fps для иссена, но это не подтверждено. <span class="who src">qualmz, Ash666</span></li>
-      </ul>
-    </div>
-    <div class="boss-card">
-      <h3>Сасаки Ганрю</h3>
-      <ul>
-        <li>По комментариям, самый неприятный босс: пара плохо читаемых атак и захват, который виден только по блеску у него за спиной. На «Резне» на него уходит от часа до полутора. <span class="who src">banick, MefbI4, Densaw95</span></li>
-        <li>Минимум три его атаки стабильно контрятся иссеном — найдите их в тренировке. <span class="who src">samogon</span></li>
-        <li>Первая фаза: парируйте, наказывайте лёгкими атаками, сбивайте выносливость и бейте иссен по красной метке. Вторая: уклоняйтесь от пинков, парируйте меч, контрите захваты. <span class="who src">PowerPyx</span></li>
-      </ul>
-    </div>
-    <div class="boss-card">
-      <h3>Минамото-но Ёсицунэ</h3>
-      <ul>
-        <li>Возьмите по два каждого расходника и берегите их до конца второй и третьей фазы. PowerPyx советует Amulet of Introspection, Stimulant, Sun-Dried Hozuki и оба Greater Talisman. На бой уходило от 1 до 14 часов, будьте готовы. <span class="who src">PowerPyx; nikemad, Black_Nero</span></li>
-        <li><span class="phase">Фаза 1</span>Если он вас схватил, лучше перезапустить бой: дальше он станет заметно сложнее. Тычок плечом — это сигнал: парируйте следующий за ним выпад с рывком. От трёх белых ударов с дистанции уклоняйтесь. <span class="who src">Black_Nero, PowerPyx</span></li>
-        <li><span class="phase">Фаза 2</span>Самая неприятная. Начинается с вертикального двойного удара в прыжке. Колоннами сбейте ему броню, но только в коротком стане, когда он спиной к вам или на колене. Пока броня цела, отражение надёжнее иссена: она режет урон. После двух дальних розовых ударов идёт атака-вспышка с телепортом: уворот, уворот, затем блок в правильный момент. Стрелы отбиваются в него. Захват здесь идёт через телепорт, ориентируйтесь на взмах руки. <span class="who src">Avant_Time, PowerPyx</span></li>
-        <li><span class="phase">Фаза 3</span>Урон проходит только в пробуждении Они, поэтому почти весь бой ведите в форме Они на иссенах и рефлекс-комбо. Добивание R1 не жмите сразу после превращения: тратьте его, когда шкала пробуждения почти пуста. Круговая атака со всасыванием душ: иссен ближе к концу оборота, когда меч примерно на «2 часа», или через ~2 секунды после «приготовься» от Сидзуки. Если не успеваете, бейте молотами, пока он готовится, а не тратьте способность оружия. Ещё вариант — «Тихая вода»: собирает фиолетовые души и позволяет уйти от круговой атаки. <span class="who src">Avant_Time, GODZILA3030, DSnaNo, PowerPyx</span></li>
-      </ul>
-    </div>
-    <div class="boss-card">
-      <h3>Реванш с боссами</h3>
-      <ul>
-        <li>В реванше 18 боссов — больше, чем сюжетных трофеев за боссов. Сложность «Резня» для босса открывается только после победы над ним на «Резне» в сюжете. Победа на высшей сложности засчитывает все нижние. <span class="who src">Joker_xD, cyrax</span></li>
-        <li>Расходники в реванше недоступны. <span class="who src">PowerPyx, Black_Nero</span></li>
-        <li>Обычно советуют идти в реванш после «Резни» с мечом «Бисямон», наградой за неё: с ним окно иссена такое же, как в форме Они, без трансформации. <span class="who src">Hiten_Mitsurugi_Ryu, Black_Nero, Avant_Time</span></li>
-        <li>Не полагайтесь только на меч: условия в реванше немного отличаются от сюжета. Выучите 2–3 атаки каждого босса под иссен. <span class="who src">Tusky</span></li>
-        <li>Альтернатива: проходите реванш сразу после победы над боссом на «Резне», пока помните его удары. Особенно Ганрю. <span class="who src">Agrial-A</span></li>
-      </ul>
-    </div>
-  </section>
-
-  <section class="sources">
-    <h2 class="section-title">Источники</h2>
-    <ul>
-      <li><a href="https://stratege.ru/ps5/games/onimusha_way_of_the_sword/trophies" target="_blank" rel="noopener">Stratege — трофеи, подсказки и дополнения</a></li>
-      <li><a href="https://stratege.ru/ps5/games/onimusha_way_of_the_sword/difficulty" target="_blank" rel="noopener">Stratege — 36 комментариев к оценке сложности</a></li>
-      <li><a href="https://powerpyx.com/onimusha-way-of-the-sword-trophy-guide-roadmap" target="_blank" rel="noopener">PowerPyx — Trophy Guide &amp; Roadmap (en)</a></li>
-      <li><a href="https://www.powerpyx.com/onimusha-way-of-the-sword-boss-guide-carnage-difficulty/" target="_blank" rel="noopener">PowerPyx — боссы на «Резне» (en)</a></li>
-      <li><a href="https://www.powerpyx.com/onimusha-way-of-the-sword-collectible-guide/" target="_blank" rel="noopener">PowerPyx — гайд по коллекционным предметам (en)</a></li>
-      <li><a href="https://allthings.how/onimusha-way-of-the-sword-all-genma-notes-locations-guide/" target="_blank" rel="noopener">AllThings.How — все заметки о гэмма (en)</a></li>
-      <li><a href="https://allthings.how/onimusha-way-of-the-sword-every-oni-stone-location-54-total/" target="_blank" rel="noopener">AllThings.How — все 54 камня Они (en)</a></li>
-    </ul>
-  </section>
-
-  <footer>Данные на 14.10.2026. «Получили N%» — доля игроков PSN с этим трофеем. Ники в советах — авторы подсказок на Stratege.</footer>
+    <div class="sheet-body" id="shBody"></div>
+    <div class="sheet-foot"><button class="big" id="shToggle" type="button">Получил</button></div>
+  </div>
 </div>
 
 <div class="toast" id="toast" role="status" aria-live="polite" hidden><span id="toastText"></span><button type="button" id="toastUndo">Отменить</button></div>
+<div class="sr" id="live" aria-live="polite"></div>
 
 <script>
+/* Trophy data. Keep each trophy name field as is: sync/make_progress.py finds exactly 52 of them. goal = manual counter target. */
 const T = {
   peerless: {g:'p', en:'Peerless', ru:'Непобедимый', d:'Получите все призы.', psn:5.8, tip:'Выпадет сам после последнего трофея.'},
   true_onimusha: {g:'g', en:'True Onimusha', ru:'Истинный Онимуся', d:'Пройдите игру на уровне сложности «Резня».', psn:7.7, tip:'«Резня» открывается после первых титров и выбирается для НГ+. Экранных подсказок действий нет. Советы по боссам — в разделе <a href="#carnage">«Как пройти „Резню“»</a>.', who:'cyrax'},
   glutton: {g:'g', en:'Glutton for Punishment', ru:'Жажда возмездия', d:'Победите всех противников в реванше с боссом на всех уровнях сложности.', psn:7.1, tip:'В реванше 18 боссов. Достаточно победить каждого на «Резне»: нижние сложности засчитаются сами. Расходники недоступны. Лучше всего — с мечом «Бисямон» после «Резни».', who:'cyrax, Black_Nero, Hiten_Mitsurugi_Ryu'},
-  demystified: {g:'s', en:'Demystified', ru:'Полное разоблачение', d:'Раскройте все тайны Киото.', psn:49.3, tip:'8 тайн Киото. Прогресс <b>не переносится</b> в НГ+, поэтому закройте все в первом прохождении.'},
-  no_job: {g:'s', en:'No Job Too Small', ru:'Всякая работа важна', d:'Пройдите все Случайные встречи.', psn:38.8, tip:'18 Случайных встреч. Прогресс <b>не переносится</b> в НГ+. Заодно это источник материалов для прокачки.'},
-  dogs: {g:'s', en:'For the Love of Dog', ru:'Любитель собак', d:'Спасите всех комаину.', psn:37.4, tip:'36 комаину. Спасённые переносятся в НГ+, так что недостающих можно добрать на «Резне».'},
+  demystified: {g:'s', goal:8, en:'Demystified', ru:'Полное разоблачение', d:'Раскройте все тайны Киото.', psn:49.3, tip:'8 тайн Киото. Прогресс <b>не переносится</b> в НГ+, поэтому закройте все в первом прохождении.'},
+  no_job: {g:'s', goal:18, en:'No Job Too Small', ru:'Всякая работа важна', d:'Пройдите все Случайные встречи.', psn:38.8, tip:'18 Случайных встреч. Прогресс <b>не переносится</b> в НГ+. Заодно это источник материалов для прокачки.'},
+  dogs: {g:'s', goal:36, en:'For the Love of Dog', ru:'Любитель собак', d:'Спасите всех комаину.', psn:37.4, tip:'36 комаину. Спасённые переносятся в НГ+, так что недостающих можно добрать на «Резне».'},
   well_rounded: {g:'s', en:'Well-Rounded', ru:'Мастер на все руки', d:'Получите и улучшите все навыки — и базовые, и особые.', psn:17.8, tip:'По гайдам в игре 54 камня Они и 53–54 камня силы. mitri не хватило трёх камней Они даже при полной зачистке, а Black_Nero хватило на все навыки за одно прохождение. Навыки переносятся в НГ+, так что недостающее добирается на «Резне».', who:'mitri, Black_Nero'},
   dressed: {g:'s', en:'Dressed to Kill', ru:'Вооружён до зубов', d:'Улучшите всё снаряжение до максимального уровня.', psn:17.3, tip:'Одежда, меч и перчатка на максимум; для одежды и меча нужно по 25 Fine Silk Cloth и Tamahagane. В НГ+ улучшения обнуляются, но на «Резне» вам всё равно нужна прокачка, поэтому трофей проще взять там: душ больше, торговец обновляет товар чаще. Перчатка — самая долгая: талисманы Бякуэ и рога Дохацу-тэна фармятся в разломах (схема — в этапе 2). Можно сделать и в первом прохождении через трюк с сохранением.', who:'Rarog, Javany, RequiemForADream, ole-x'},
-  armory: {g:'s', en:'Oni Armory', ru:'Арсенал Они', d:'Получите всё оружие Они.', psn:43.7, tip:'7 видов оружия Они: первые 3 даются по сюжету, остальные 4 нужно найти.'},
-  medical: {g:'s', en:'Medical Marvel', ru:'Чудо медицины', d:'Улучшите все мешочки с ходзуки до максимального уровня.', psn:15.5, tip:'9 мешочков на максимум. Дефицитные материалы — кожа и закалённое железо: скупите всё у торговца, пройдите сайд-квесты, затем кругами по сундукам и мини-боссам в разломах. У mitri на это ушло около 3 часов. Мешочки переносятся в НГ+ — качайте их в первом прохождении.', who:'mitri, Rarog'},
-  charmed: {g:'s', en:'Charmed Life', ru:'Как зачарованный', d:'Улучшите все амулеты до максимального уровня.', psn:12.6, tip:'15 амулетов на максимум. Нужны две валюты: около 135 000 красных душ и около 150 000 «Благосклонности» (Favor) — её дают за обмен предметов в зале Эммы. Амулеты переносятся в НГ+.', who:'Rarog, mitri'},
-  brutalist: {g:'s', en:'Brutalist', ru:'Бруталист', d:'Нанесите 50 атак иссен.', psn:49.5, tip:'Иссен — удар за мгновение до попадания врага. Это главный навык для «Резни», так что учите его с начала игры. Остаток добивается в тренировке «Иссен».'},
+  armory: {g:'s', goal:7, en:'Oni Armory', ru:'Арсенал Они', d:'Получите всё оружие Они.', psn:43.7, tip:'7 видов оружия Они: первые 3 даются по сюжету, остальные 4 нужно найти.'},
+  medical: {g:'s', goal:9, en:'Medical Marvel', ru:'Чудо медицины', d:'Улучшите все мешочки с ходзуки до максимального уровня.', psn:15.5, tip:'9 мешочков на максимум. Дефицитные материалы — кожа и закалённое железо: скупите всё у торговца, пройдите сайд-квесты, затем кругами по сундукам и мини-боссам в разломах. У mitri на это ушло около 3 часов. Мешочки переносятся в НГ+ — качайте их в первом прохождении.', who:'mitri, Rarog'},
+  charmed: {g:'s', goal:15, en:'Charmed Life', ru:'Как зачарованный', d:'Улучшите все амулеты до максимального уровня.', psn:12.6, tip:'15 амулетов на максимум. Нужны две валюты: около 135 000 красных душ и около 150 000 «Благосклонности» (Favor) — её дают за обмен предметов в зале Эммы. Амулеты переносятся в НГ+.', who:'Rarog, mitri'},
+  brutalist: {g:'s', goal:50, en:'Brutalist', ru:'Бруталист', d:'Нанесите 50 атак иссен.', psn:49.5, tip:'Иссен — удар за мгновение до попадания врага. Это главный навык для «Резни», так что учите его с начала игры. Остаток добивается в тренировке «Иссен».'},
   showdown: {g:'b', en:'Onimusha Showdown', ru:'Схватка Онимусей', d:'Победите Сасаки Ганрю.', psn:91.0, tip:'Сюжет, храм Киёмидзу-дэра. Парируйте, сбивайте выносливость лёгкими атаками, иссен по красной метке.'},
   stuffed: {g:'b', en:'Get Stuffed', ru:'Выкуси!', d:'Победите Дайдару.', psn:89.1, tip:'Сюжет, Убежище Они. Быстро собирайте летающие сферы, иначе он впадёт в ярость. Бейте по ногам, чтобы сбить броню.'},
   twisted: {g:'b', en:'Twisted Fates', ru:'Исковерканные судьбы', d:'Победите Расё-гана.', psn:84.0, tip:'Сюжет, после статуй в задании «Be Careful What You Wish For». Во второй фазе притягивает цепями. Держите темп: выносливость у него восстанавливается быстро.'},
@@ -670,27 +1023,27 @@ const T = {
   mystery1: {g:'b', en:'Mystery Solved', ru:'Дело раскрыто', d:'Раскройте свою первую тайну Киото.', psn:72.3, tip:'Выпадет при первом исследовании Киото.'},
   life_saver: {g:'b', en:'Life-Saver', ru:'Спаситель', d:'Пройдите свою первую Случайную встречу.', psn:75.1, tip:'Первая побочная Случайная встреча.'},
   byakue: {g:'b', en:'Serves You Right', ru:'Поделом тебе', d:'Победите Бякуэ в храме Киёмидзу-дэра.', psn:64.0, tip:'Бякуэ за стеной Они к северу от Зеркала Духов у ворот Нио-мон. Проход открывается силой колонн. Демона может не оказаться с первого раза: по PowerPyx он связан со Случайной встречей «Ace Archer», masonal нашёл его после сюжетного уровня с Нуэ. Два брейк-иссена — и готово. <a href="https://youtu.be/HOWjoqs4Gsk" target="_blank" rel="noopener">Видеогайд (en)</a>.', who:'masonal, PowerPyx'},
-  citizens: {g:'b', en:'Citizen Savior', ru:'Народный герой', d:'Спасите 30 горожан от мародерствующих гэмма.', psn:23.4, tip:'Спасайте всех по пути и обязательно заговаривайте с каждым спасённым, иначе спасение не засчитывается. Счётчик можно добить в НГ+.', who:'RequiemForADream, PowerPyx'},
+  citizens: {g:'b', goal:30, en:'Citizen Savior', ru:'Народный герой', d:'Спасите 30 горожан от мародерствующих гэмма.', psn:23.4, tip:'Спасайте всех по пути и обязательно заговаривайте с каждым спасённым, иначе спасение не засчитывается. Счётчик можно добить в НГ+.', who:'RequiemForADream, PowerPyx'},
   merchant: {g:'b', en:'Selfish Selflessness', ru:'Эгоистичный альтруизм', d:'Спасите торговца, на которого напали гэмма.', psn:62.5, tip:'Случайное событие, обычно попадается раньше, чем вы спасёте 30 горожан.'},
   dog1: {g:'b', en:'No Dog Left Behind', ru:'Дай лапу', d:'Спасите своего первого комаину.', psn:72.3, tip:'Первый комаину по ходу исследования.'},
-  notes: {g:'b', en:'Genma-ologist', ru:'Гэммолог', d:'Соберите все заметки о гэмма.', psn:11.5, tip:'23 заметки в скрытых сундуках: зрение Они (L2 + R2) → медальон Они → сундук. Последняя, про Ёсицунэ, берётся только после финала: «Продолжить» вернёт вас в храм Рокудо-тинно-дзи, заметка — у колодца за храмом. Заметки переносятся в НГ+. <a href="https://www.youtube.com/watch?v=gtvE-iXWtf4" target="_blank" rel="noopener">Видеогайд (en)</a>.', who:'pentagon_usa, mitri'},
+  notes: {g:'b', goal:23, en:'Genma-ologist', ru:'Гэммолог', d:'Соберите все заметки о гэмма.', psn:11.5, tip:'23 заметки в скрытых сундуках: зрение Они (L2 + R2) → медальон Они → сундук. Последняя, про Ёсицунэ, берётся только после финала: «Продолжить» вернёт вас в храм Рокудо-тинно-дзи, заметка — у колодца за храмом. Заметки переносятся в НГ+. <a href="https://www.youtube.com/watch?v=gtvE-iXWtf4" target="_blank" rel="noopener">Видеогайд (en)</a>.', who:'pentagon_usa, mitri'},
   second: {g:'b', en:'Second Helping', ru:'Второй раунд', d:'Победите противника в реванше с боссом.', psn:65.7, tip:'Реванш и тренировки открываются по сюжету в задании «The Oni\'s Apprentice». Тренировочная площадка: зал Эммы, колокол в углу, разговор с Такамурой. Победите любого уже пройденного босса на лёгкой — это минутное дело.', who:'PowerPyx'},
   winding: {g:'b', en:'The Winding Way of the Sword', ru:'Извилистый путь меча', d:'Получите и улучшите все базовые или все особые навыки.', psn:26.9, tip:'Достаточно одной ветки целиком. Обычно выпадает к концу первого прохождения.'},
   sharp: {g:'b', en:'Looking Sharp', ru:'Сногсшибательно', d:'Улучшите снаряжение в первый раз.', psn:87.0, tip:'Любое первое улучшение одежды, меча или перчатки.'},
   health: {g:'b', en:'Health Is Wealth', ru:'Здоровье дороже золота', d:'Улучшите мешочек с ходзуки до максимального уровня.', psn:53.9, tip:'Один мешочек на максимум.'},
   charmer: {g:'b', en:'A Real Charmer', ru:'Божественная защита', d:'Улучшите амулет до максимального уровня.', psn:69.9, tip:'Один амулет на максимум.'},
-  burning: {g:'b', en:'Burning Blade', ru:'Пылающий клинок', d:'Победите 50 врагов, находясь в состоянии пламени.', psn:65.2, tip:'Состояние пламени заполняется парированиями. Тренировка «Состояние пламени» выдаёт врагов по одному.'},
-  stop: {g:'b', en:'Stop Motion', ru:'Остановись, мгновенье', d:'Выполните 50 рефлекс-комбо.', psn:49.8, tip:'Шкалу рефлексов заполняют рефлекс-уклонения. Остаток добивается в тренировке «Рефлекс-комбо».'},
-  wielder: {g:'b', en:'Wielder of Oni Armaments', ru:'Искусство оружия Они', d:'Победите 100 врагов с помощью оружия Они.', psn:29.4, tip:'Набирается по ходу игры, остаток — в тренировках с оружием Они.', who:'holly_rabbit'},
-  onis_oni: {g:'b', en:"Oni's Oni", ru:'Свой среди Они', d:'Победите 50 врагов, находясь в состоянии пробуждения Они.', psn:20.0, tip:'Пробуждение включается на L3 + R3, дальше R1. Удобно в тренировке «Пробуждение Они».', who:'holly_rabbit'},
-  flow: {g:'b', en:'Flow State', ru:'В состоянии потока', d:'Победите 50 врагов с помощью цепи иссен.', psn:13.3, tip:'Нужен навык «Цепь иссен», желательно с «Длиной цепи». Как вести цепь: после первого иссена снова жмите атаку, пока на экране вспышка — сразу после анимации удара. Цепь считается от двух врагов. Проще всего в тренировке «Цепь иссен». Ещё место: у Зеркала «Улица Годзё — Запад», лицом к Зеркалу налево и прямо, во дворике 2–4 моба; отдых у Зеркала их возрождает. Амулет самопознания упрощает тайминг.', who:'Levenber, Trokens, PowerPyx'},
-  stealth: {g:'b', en:'Silent Violence', ru:'Молчаливое насилие', d:'Скрытно убейте 20 врагов.', psn:49.2, tip:'Подходите сзади шагом: бег выдаёт вас, пока не открыт навык тихого бега.'},
-  pinch: {g:'b', en:'Pinch Hitter', ru:'Ловкий удар', d:'Отразите 50 снарядов.', psn:38.9, tip:'Держите блок и нажмите □, когда снаряд подлетает. С «вперёд» стрела летит обратно во врага. Проще всего с навыком «Отражение» (L1 + X).', who:'Barradda, SkylineGTR, yaprostoohuel'},
-  deadeye: {g:'b', en:'Deadeye', ru:'Меткий глаз', d:'Попадите 100 раз в голову из лука.', psn:53.5, tip:'Цельтесь чуть выше головы. Стрелы, отражённые в лучников, их оглушают.'},
-  winning: {g:'b', en:'Winning Is What Matters', ru:'Победа важнее всего', d:'Нанесите 50 атак объектами окружения.', psn:71.4, tip:'Считаются попадания, а не убийства: бочки, доски, тележки, взрыв бочек выстрелом из лука.'},
-  untouch: {g:'b', en:'Untouchable', ru:'Неприкосновенный', d:'Выполните 50 контрзахватов.', psn:61.8, tip:'При захвате (сигнал-молния) уклоняйтесь навстречу врагу. Набирается по ходу игры.'},
-  coming: {g:'b', en:'Coming Through!', ru:'Лучшая защита — это нападение', d:'Пробейте защиту противника 50 раз.', psn:65.2, tip:'Получается само за первое прохождение.'},
-  helm: {g:'b', en:'Helm Splitter', ru:'Разрубатель шлемов', d:'Разбейте 100 щитов или частей вражеской брони.', psn:67.8, tip:'Броню и щиты ломайте мощью колонн. Остаток — в тренировке на силу Они.'},
+  burning: {g:'b', goal:50, en:'Burning Blade', ru:'Пылающий клинок', d:'Победите 50 врагов, находясь в состоянии пламени.', psn:65.2, tip:'Состояние пламени заполняется парированиями. Тренировка «Состояние пламени» выдаёт врагов по одному.'},
+  stop: {g:'b', goal:50, en:'Stop Motion', ru:'Остановись, мгновенье', d:'Выполните 50 рефлекс-комбо.', psn:49.8, tip:'Шкалу рефлексов заполняют рефлекс-уклонения. Остаток добивается в тренировке «Рефлекс-комбо».'},
+  wielder: {g:'b', goal:100, en:'Wielder of Oni Armaments', ru:'Искусство оружия Они', d:'Победите 100 врагов с помощью оружия Они.', psn:29.4, tip:'Набирается по ходу игры, остаток — в тренировках с оружием Они.', who:'holly_rabbit'},
+  onis_oni: {g:'b', goal:50, en:"Oni's Oni", ru:'Свой среди Они', d:'Победите 50 врагов, находясь в состоянии пробуждения Они.', psn:20.0, tip:'Пробуждение включается на L3 + R3, дальше R1. Удобно в тренировке «Пробуждение Они».', who:'holly_rabbit'},
+  flow: {g:'b', goal:50, en:'Flow State', ru:'В состоянии потока', d:'Победите 50 врагов с помощью цепи иссен.', psn:13.3, tip:'Нужен навык «Цепь иссен», желательно с «Длиной цепи». Как вести цепь: после первого иссена снова жмите атаку, пока на экране вспышка — сразу после анимации удара. Цепь считается от двух врагов. Проще всего в тренировке «Цепь иссен». Ещё место: у Зеркала «Улица Годзё — Запад», лицом к Зеркалу налево и прямо, во дворике 2–4 моба; отдых у Зеркала их возрождает. Амулет самопознания упрощает тайминг.', who:'Levenber, Trokens, PowerPyx'},
+  stealth: {g:'b', goal:20, en:'Silent Violence', ru:'Молчаливое насилие', d:'Скрытно убейте 20 врагов.', psn:49.2, tip:'Подходите сзади шагом: бег выдаёт вас, пока не открыт навык тихого бега.'},
+  pinch: {g:'b', goal:50, en:'Pinch Hitter', ru:'Ловкий удар', d:'Отразите 50 снарядов.', psn:38.9, tip:'Держите блок и нажмите □, когда снаряд подлетает. С «вперёд» стрела летит обратно во врага. Проще всего с навыком «Отражение» (L1 + X).', who:'Barradda, SkylineGTR, yaprostoohuel'},
+  deadeye: {g:'b', goal:100, en:'Deadeye', ru:'Меткий глаз', d:'Попадите 100 раз в голову из лука.', psn:53.5, tip:'Цельтесь чуть выше головы. Стрелы, отражённые в лучников, их оглушают.'},
+  winning: {g:'b', goal:50, en:'Winning Is What Matters', ru:'Победа важнее всего', d:'Нанесите 50 атак объектами окружения.', psn:71.4, tip:'Считаются попадания, а не убийства: бочки, доски, тележки, взрыв бочек выстрелом из лука.'},
+  untouch: {g:'b', goal:50, en:'Untouchable', ru:'Неприкосновенный', d:'Выполните 50 контрзахватов.', psn:61.8, tip:'При захвате (сигнал-молния) уклоняйтесь навстречу врагу. Набирается по ходу игры.'},
+  coming: {g:'b', goal:50, en:'Coming Through!', ru:'Лучшая защита — это нападение', d:'Пробейте защиту противника 50 раз.', psn:65.2, tip:'Получается само за первое прохождение.'},
+  helm: {g:'b', goal:100, en:'Helm Splitter', ru:'Разрубатель шлемов', d:'Разбейте 100 щитов или частей вражеской брони.', psn:67.8, tip:'Броню и щиты ломайте мощью колонн. Остаток — в тренировке на силу Они.'},
   souls30: {g:'b', en:'Get This Thing Off Me', ru:'Голодная перчатка', d:'Поглотите не менее 30 душ одновременно.', psn:89.6, tip:'Быстро убейте около шести врагов, не поглощая души, следите за счётчиком вверху экрана и поглотите всё разом.'},
   berserk: {g:'b', en:'Berserker', ru:'Берсерк', d:'Победите трёх врагов непрерывными атаками брейк-иссен.', psn:80.4, tip:'После брейк-иссена лёгкая атака переносит удар на следующего помеченного врага. Нужно три подряд.'},
   griller: {g:'b', en:'Genma Griller', ru:'Шашлык из гэмма', d:'Заставьте пылать трёх врагов одновременно.', psn:13.2, tip:'Флейта огненных птиц с заряженным выстрелом (удержание R1, лучше прокачать полностью): соберите трёх слабых врагов в кучу и выстрелите в центр, трофей придёт через 2–4 секунды. Места: переулок у Зеркала «Улица Годзё — Запад» (при неудаче выйдите в меню и загрузите автосейв, враги появятся снова); закрытая локация с огнём и тремя бочками масла перед встречей с монахом по сюжету; тренировка «Флейта огненных птиц» (убить летающую голову, сломать щит, собрать мобов). Вариант с нагинатой Они: разбить сосуды с маслом, сломать факел и раздуть огонь навыком «Ветрохлёст».', who:'pentagon_usa, black__blade, Zangetsu, Gnev78, Hellovveen87'}
@@ -772,153 +1125,453 @@ const STAGES = [
   }
 ];
 
+
 /* ---------- state ---------- */
 const KEY = 'onimusha-plat-v1';
 const store = {
   get(k, fallback) { try { const v = localStorage.getItem(k); return v === null ? fallback : v; } catch (e) { return fallback; } },
   set(k, v) { try { localStorage.setItem(k, v); } catch (e) {} }
 };
-let done = {};
-try { done = JSON.parse(store.get(KEY, '{}')) || {}; } catch (e) { done = {}; }
+const readObj = k => {
+  try { const v = JSON.parse(store.get(k, '{}')); return v && typeof v === 'object' && !Array.isArray(v) ? v : {}; } catch (e) { return {}; }
+};
+let done = readObj(KEY);                        // manual ticks, same key as the old page
+const tasks = readObj(KEY + '-tasks');          // stage checklists: {"0-3": 1}
+const counts = readObj(KEY + '-counts');        // manual counters: {citizens: 12}
+const attempts = readObj(KEY + '-attempts');    // boss attempts: {ganryu: 4}
+const ui = readObj(KEY + '-ui');                // open scrolls, filters, selected boss
 const save = () => store.set(KEY, JSON.stringify(done));
+const saveTasks = () => store.set(KEY + '-tasks', JSON.stringify(tasks));
+const saveCounts = () => store.set(KEY + '-counts', JSON.stringify(counts));
+const saveAttempts = () => store.set(KEY + '-attempts', JSON.stringify(attempts));
+const saveUi = () => store.set(KEY + '-ui', JSON.stringify(ui));
 let psn = new Set();            // confirmed by the last PSN sync (progress.json); can't be unticked
 const pending = new Set();      // just ticked: stays visible under "hide done" until the undo toast closes
 let hide = store.get(KEY + '-hide', '0') === '1';
-let compact = store.get(KEY + '-compact', '0') === '1';
 const isDone = id => !!done[id] || psn.has(id);
-const gradeLetter = {p:'П', g:'З', s:'С', b:'Б'};
-const gradeName = {p:'платина', g:'золото', s:'серебро', b:'бронза'};
-const stageIds = STAGES.map(s => s.groups.flatMap(g => g.ids));
 
-/* ---------- render ---------- */
-function row(id) {
+const IDS = Object.keys(T);
+const stageIds = STAGES.map(s => s.groups.flatMap(g => g.ids));
+const ORDER = stageIds.flat();
+const stageOf = {}, groupOf = {};
+STAGES.forEach((s, i) => s.groups.forEach(g => g.ids.forEach(id => { stageOf[id] = i; groupOf[id] = g.title; })));
+const GK = {p:'白金', g:'金', s:'銀', b:'銅'};
+const GK1 = {p:'白', g:'金', s:'銀', b:'銅'};
+const gradeName = {p:'платина', g:'золото', s:'серебро', b:'бронза'};
+const gradeTitle = {p:'Платина', g:'Золото', s:'Серебро', b:'Бронза'};
+const $ = id => document.getElementById(id);
+const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;'}[c]));
+const ru1 = n => n.toFixed(1).replace('.', ',');
+const countOf = id => Math.max(0, Math.min(T[id].goal || 0, counts[id] | 0));
+const stat = i => { const ids = stageIds[i]; return { got: ids.filter(isDone).length, total: ids.length }; };
+const currentStage = () => { for (let i = 0; i < STAGES.length; i++) { const s = stat(i); if (s.got < s.total) return i; } return -1; };
+const liveEl = $('live');
+let liveTimer = null;
+const say = msg => { clearTimeout(liveTimer); liveEl.textContent = ''; liveTimer = setTimeout(() => { liveEl.textContent = msg; }, 60); };
+const CHEV_R = '<svg class="row-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg>';
+
+/* ---------- trophy row (stage lists and search) ---------- */
+function rowHTML(id, ctx) {
   const t = T[id];
-  const who = t.who ? ` <span class="who">— ${t.who}</span>` : '';
-  return `<div class="trophy" data-id="${id}">
-    <label class="check" for="cb-${id}"><input type="checkbox" id="cb-${id}" aria-labelledby="n-${id}"><span class="box" aria-hidden="true"></span></label>
-    <span class="badge g-${t.g}" role="img" aria-label="${gradeName[t.g]}">${gradeLetter[t.g]}</span>
-    <div class="t-main">
-      <span class="t-name" id="n-${id}">${t.en} <em>/ ${t.ru}</em><span class="psn-tag">PSN</span></span>
-      <span class="t-desc">${t.d} <span class="more">Совет ▾</span></span>
-      <span class="t-tip">${t.tip}${who}</span>
-      <span class="rar"><i style="--r:${(t.psn / 100).toFixed(3)}" aria-hidden="true"></i>получили ${t.psn.toFixed(1).replace('.', ',')}% игроков</span>
-    </div>
+  return `<div class="row" data-id="${id}">
+    <label class="tick"><input type="checkbox" data-tick="${id}" aria-label="${esc('Получен: ' + t.en)}"><span class="box" aria-hidden="true"></span></label>
+    <button type="button" class="row-main" data-open="${id}">
+      <span class="gs g-${t.g}" aria-hidden="true">${GK1[t.g]}</span>
+      <span class="row-txt"><span class="row-name">${t.en}</span><span class="row-sub">${t.ru}</span></span>
+      <span class="row-side"><span class="psn-tag">PSN</span><span class="row-count"></span>${ctx === 'search' ? `<span class="row-stage" aria-hidden="true">${STAGES[stageOf[id]].k}</span>` : ''}${CHEV_R}</span>
+    </button>
   </div>`;
 }
 
-const tl = document.getElementById('timeline');
-tl.innerHTML = STAGES.map((s, i) => `<section class="stage" id="stage-${i + 1}" data-stage="${i}">
-    <div class="stage-head">
-      <div class="kanji" aria-hidden="true">
-        <svg class="enso" viewBox="0 0 72 72"><circle class="enso-track" cx="36" cy="36" r="31"/><circle class="enso-fill" cx="36" cy="36" r="31" stroke-dasharray="0 400"/></svg>
-        <span>${s.k}</span>
-      </div>
-      <div class="stage-titles">
-        <div class="stage-meta"><span>Этап ${i + 1}</span><span>${s.time}</span><span class="count" data-count="${i}">0 / ${stageIds[i].length}</span></div>
-        <h2>${s.title}</h2>
-      </div>
-    </div>
-    <ul class="intro">${s.intro.map(x => `<li>${x}</li>`).join('')}</ul>
-    ${s.notes.map(n => `<div class="note ${n.kind}"><h3>${n.title}</h3>${n.html}</div>`).join('')}
-    <p class="stage-clear" hidden>Все трофеи этапа получены и скрыты.</p>
-    ${s.groups.map(g => `<div class="group">
-      <div class="group-title"><h3>${g.title}</h3>${g.note ? `<p>${g.note}</p>` : ''}</div>
-      <div class="list">${g.ids.map(row).join('')}</div>
-    </div>`).join('')}
-  </section>`).join('');
-
-const rows = [...document.querySelectorAll('.trophy')];
-const chips = [...document.querySelectorAll('.jump a')];
-
-/* ---------- counters & visibility ---------- */
-function update() {
-  const all = Object.keys(T);
-  const n = all.filter(isDone).length;
-  document.getElementById('total').textContent = `${n} / ${all.length}`;
-  document.getElementById('totalbar').style.width = (n / all.length * 100) + '%';
-  stageIds.forEach((ids, i) => {
-    const got = ids.filter(isDone).length;
-    document.querySelector(`[data-count="${i}"]`).textContent = `${got} / ${ids.length}`;
-    const chip = document.querySelector(`[data-jump="${i}"]`);
-    chip.querySelector('small').textContent = `${got}/${ids.length}`;
-    chip.classList.toggle('complete', got === ids.length);
-    chip.style.setProperty('--p', (got / ids.length).toFixed(3));
-    // Ensō around the stage kanji: the ring's arc (179 of ~195 units, the rest is the brush gap) fills with progress and closes when complete
-    const stage = document.getElementById(`stage-${i + 1}`);
-    stage.classList.toggle('complete', got === ids.length);
-    stage.querySelector('.enso-fill').setAttribute('stroke-dasharray', got === ids.length ? '195 400' : `${(got / ids.length * 179).toFixed(1)} 400`);
-    chip.setAttribute('aria-label', `Этап ${i + 1}, ${STAGES[i].short}: ${got} из ${ids.length}`);
+function syncRows(root) {
+  root.querySelectorAll('.row[data-id]').forEach(r => {
+    const id = r.dataset.id, t = T[id], d = isDone(id), p = psn.has(id);
+    r.classList.toggle('done', d);
+    r.classList.toggle('psn', p);
+    const inp = r.querySelector('input');
+    inp.checked = d;
+    inp.disabled = p;
+    inp.setAttribute('aria-label', (p ? 'Получен по данным PSN: ' : 'Получен: ') + t.en);
+    const c = r.querySelector('.row-count');
+    c.textContent = t.goal ? `${d ? t.goal : countOf(id)}/${t.goal}` : '';
+    const hideDone = r.parentElement && r.parentElement.dataset.hideDone === '1';
+    r.hidden = hideDone && d && !pending.has(id);
   });
 }
 
+/* ---------- 道 path: header and the road of gates ---------- */
+const TORII = '<svg viewBox="0 0 120 100" aria-hidden="true" focusable="false"><path class="tp" d="M26 28H35L37 97H24Z"/><path class="tp" d="M85 28H94L96 97H83Z"/><rect class="tp" x="8" y="41" width="104" height="7" rx="1"/><rect class="tp" x="55" y="27" width="10" height="14"/><rect class="tp" x="14" y="21.5" width="92" height="6" rx="1"/><path class="tp" d="M2 8Q60 18 118 8L114 17Q60 26 6 17Z"/></svg>';
+const FLAME = '<span class="flame" aria-hidden="true"><svg viewBox="0 0 22 30"><path d="M11 1C13.5 7.5 21 12.5 21 19.5A10 10 0 0 1 1 19.5C1 12.5 8.5 7.5 11 1Z" fill="url(#flameGrad)"/><ellipse cx="11" cy="21" rx="4" ry="5" fill="#FFFFFF" opacity=".85"/></svg></span>';
+const road = $('road');
+road.innerHTML = STAGES.map((s, i) => `<li class="gate" data-i="${i}">
+    <button type="button" class="gate-btn" data-gate="${i}">
+      <span class="torii node">${TORII}${FLAME}</span>
+      <span class="gate-info">
+        <span class="gate-top"><span class="gate-k" aria-hidden="true">${s.k}</span><span class="gate-name">${s.short}</span></span>
+        <span class="gate-meta">Этап ${i + 1} · ${s.time}</span>
+        <span class="gate-prog"><span class="mini" aria-hidden="true"><i></i></span><span class="gate-count"></span></span>
+        <span class="gate-tag"></span>
+      </span>
+    </button>
+  </li>`).join('') + `<li class="gate gate-end" id="gateEnd">
+    <button type="button" class="gate-btn" data-open="peerless">
+      <span class="node end-seal" aria-hidden="true">白金</span>
+      <span class="end-txt"><b>Непобедимый</b><small id="endSub">платина</small></span>
+    </button>
+  </li>`;
+
+function updateHeader() {
+  const n = IDS.filter(isDone).length;
+  $('tot').textContent = n;
+  $('totBar').style.width = (n / IDS.length * 100) + '%';
+}
+
+function updateRoad() {
+  const cur = currentStage();
+  road.querySelectorAll('.gate[data-i]').forEach(li => {
+    const i = +li.dataset.i, { got, total } = stat(i);
+    const state = got === total ? 'done' : i === cur ? 'current' : 'future';
+    li.className = 'gate is-' + state;
+    li.querySelector('.mini i').style.width = (got / total * 100) + '%';
+    li.querySelector('.gate-count').textContent = `${got}/${total}`;
+    li.querySelector('.gate-tag').textContent = state === 'done' ? 'Врата пройдены' : state === 'current' ? 'Вы здесь' : '';
+    li.querySelector('.gate-btn').setAttribute('aria-label',
+      `Этап ${i + 1}, ${STAGES[i].short}: ${got} из ${total}, ${STAGES[i].time}` + (state === 'current' ? '. Вы здесь' : state === 'done' ? '. Пройден' : ''));
+  });
+  const end = $('gateEnd');
+  end.classList.toggle('is-done', isDone('peerless'));
+  $('endSub').textContent = isDone('peerless') ? 'платина получена' : `платина · ${IDS.filter(isDone).length}/52`;
+  drawRoad();
+}
+
+// The road is one SVG behind the gates: centre of each torii's opening, joined by S-curves.
+// Segments after a cleared gate are walked (solid ink), the rest is a dotted trail.
+function drawRoad() {
+  const wrap = $('roadWrap'), svg = $('roadSvg');
+  if (!wrap.offsetParent) return;
+  const box = wrap.getBoundingClientRect();
+  const pts = [...wrap.querySelectorAll('.node')].map(el => {
+    const r = el.getBoundingClientRect();
+    const k = el.classList.contains('torii') ? 0.72 : 0.5;
+    return { x: +(r.left - box.left + r.width / 2).toFixed(1), y: +(r.top - box.top + r.height * k).toFixed(1) };
+  });
+  if (!pts.length) return;
+  let band = '', walked = '', future = '';
+  for (let i = 0; i < pts.length - 1; i++) {
+    const a = pts[i], b = pts[i + 1], k = ((b.y - a.y) * 0.55).toFixed(1);
+    const seg = `M${a.x} ${a.y}C${a.x} ${(a.y + +k).toFixed(1)} ${b.x} ${(b.y - k).toFixed(1)} ${b.x} ${b.y}`;
+    band += seg;
+    const s = stat(i);
+    if (s.got === s.total) walked += seg; else future += seg;
+  }
+  svg.setAttribute('viewBox', `0 0 ${box.width.toFixed(1)} ${box.height.toFixed(1)}`);
+  svg.innerHTML = `<path class="road-band" d="${band}"/><path class="road-future" d="${future}"/><path class="road-walked" d="${walked}"/>`;
+}
+if (window.ResizeObserver) new ResizeObserver(() => drawRoad()).observe($('roadWrap'));
+else window.addEventListener('resize', drawRoad);
+
+/* ---------- stage screen ---------- */
+let stageIdx = 0;
+const NOTE_FALLBACK = [
+  '<p>Отдельных заметок к этому этапу нет: совет к каждому трофею — в его карточке, коснитесь названия в свитке «Трофеи».</p><button class="btn link" type="button" data-go="#rules"><span class="gk" aria-hidden="true">掟</span>Правила пути: что важно знать до старта</button>',
+  '',
+  '<p>Отдельных заметок к этому этапу нет: совет к каждому трофею — в его карточке.</p><button class="btn link" type="button" data-go="#bosses"><span class="gk" aria-hidden="true">鬼</span>Тактика на Ёсицунэ — во вкладке «Боссы»</button>',
+  '',
+  '<p>Отдельных заметок к этому этапу нет: совет к каждому трофею — в его карточке.</p><button class="btn link" type="button" data-go="#bosses"><span class="gk" aria-hidden="true">再</span>Реванш и боссы на «Резне» — во вкладке «Боссы»</button>'
+];
+['tasks', 'trophies', 'notes'].forEach(k => {
+  const el = document.querySelector(`#v-stage [data-scroll="${k}"]`);
+  const saved = (ui.scrolls || {})[k];
+  el.open = saved === undefined ? k !== 'notes' : !!saved;
+  el.addEventListener('toggle', () => { ui.scrolls = ui.scrolls || {}; ui.scrolls[k] = el.open; saveUi(); });
+});
+
+function renderStage(i) {
+  stageIdx = i;
+  const s = STAGES[i];
+  $('stK').textContent = s.k;
+  $('stMeta').textContent = `Этап ${i + 1} из 5 · ${s.time}`;
+  $('stTitle').textContent = s.title;
+  $('stageNo').textContent = `${i + 1} / 5`;
+  $('prevStage').disabled = i === 0;
+  $('nextStage').disabled = i === STAGES.length - 1;
+  $('tasksList').innerHTML = s.intro.map((x, j) => {
+    const k = `${i}-${j}`;
+    return `<li class="task"><label><input type="checkbox" data-task="${k}"${tasks[k] ? ' checked' : ''}><span class="box" aria-hidden="true"></span><span class="task-txt">${x}</span></label></li>`;
+  }).join('');
+  $('stGroups').innerHTML = s.groups.map(g => `<section class="group" style="margin-top:6px">
+      <div class="group-hd"><h3>${g.title}</h3>${g.note ? `<span class="group-note">${g.note}</span>` : ''}<span class="group-count"></span></div>
+      <div class="list" data-hide-done="${hide ? 1 : 0}">${g.ids.map(id => rowHTML(id)).join('')}</div>
+    </section>`).join('') + '<p class="stage-clear" id="stClear" hidden>Все трофеи этапа получены и скрыты.</p>';
+  $('stNotes').innerHTML = s.notes.length
+    ? s.notes.map(n => `<div class="note ${n.kind}"><h3>${n.title}</h3>${n.html}</div>`).join('')
+    : NOTE_FALLBACK[i];
+  $('notesCount').textContent = s.notes.length ? String(s.notes.length) : '';
+  const nx = STAGES[i + 1];
+  $('nextGate').innerHTML = nx
+    ? `<span class="gk" aria-hidden="true">${nx.k}</span><span><small>Следующие врата</small><b>${nx.short}: ${nx.title}</b></span>${CHEV_R}`
+    : '<span class="gk" aria-hidden="true">道</span><span><small>Конец пути</small><b>Вернуться к карте пяти врат</b></span>' + CHEV_R;
+  updateStage();
+}
+
+function updateStage() {
+  const i = stageIdx, { got, total } = stat(i), complete = got === total;
+  $('stHero').classList.toggle('complete', complete);
+  $('ensoFill').setAttribute('stroke-dasharray', complete ? '327 400' : `${(got / total * 300).toFixed(1)} 400`);
+  const tN = STAGES[i].intro.length, tDone = STAGES[i].intro.filter((_, j) => tasks[`${i}-${j}`]).length;
+  $('stSum').innerHTML = `Трофеи <b>${got}/${total}</b> · задачи <b>${tDone}/${tN}</b>`;
+  $('tasksCount').textContent = `${tDone}/${tN}`;
+  $('trophCount').textContent = `${got}/${total}`;
+  $('hideBtn').setAttribute('aria-pressed', String(hide));
+  const v = $('v-stage');
+  v.querySelectorAll('#stGroups .list').forEach(l => { l.dataset.hideDone = hide ? '1' : '0'; });
+  syncRows(v);
+  let any = false;
+  v.querySelectorAll('#stGroups .group').forEach((g, gi) => {
+    const ids = STAGES[i].groups[gi].ids;
+    g.querySelector('.group-count').textContent = `${ids.filter(isDone).length}/${ids.length}`;
+    const vis = !!g.querySelector('.row:not([hidden])');
+    g.hidden = !vis;
+    any = any || vis;
+  });
+  $('stClear').hidden = any;
+}
+
+/* ---------- 探 search ---------- */
 const fold = s => String(s).toLowerCase().replace(/ё/g, 'е').replace(/<[^>]+>/g, ' ');
 const haystack = {};
-Object.keys(T).forEach(id => { haystack[id] = fold([T[id].en, T[id].ru, T[id].d].join(' ')); });
-const qInput = document.getElementById('q');
-const qClear = document.getElementById('qclear');
-const qStatus = document.getElementById('qstatus');
+IDS.forEach(id => { haystack[id] = fold([T[id].en, T[id].ru, T[id].d].join(' ')); });
+const qInput = $('q'), qClear = $('qclear'), qStatus = $('qstatus'), results = $('results');
+const sf = { todo: false, ctr: false, stage: null, grade: null };
+const searchWords = () => fold(qInput.value).trim().split(/\s+/).filter(Boolean);
+const searchActive = () => searchWords().length > 0 || sf.todo || sf.ctr || sf.stage !== null || sf.grade !== null;
 
-function searchWords() { return fold(qInput.value).trim().split(/\s+/).filter(Boolean); }
-
-function refreshVisibility() {
-  const words = searchWords();
-  const searching = words.length > 0;
-  document.body.classList.toggle('searching', searching);
+function renderSearch() {
+  const words = searchWords(), active = searchActive();
   qClear.hidden = !qInput.value;
-  let found = 0;
-  rows.forEach(l => {
-    const id = l.dataset.id;
-    const hit = !searching || words.every(w => haystack[id].includes(w));
-    // While searching, show done trophies too: you are looking for one specific trophy
-    const hiddenAsDone = hide && !searching && isDone(id) && !pending.has(id);
-    l.hidden = !hit || hiddenAsDone;
-    if (searching && hit) found++;
-  });
-  document.querySelectorAll('.group').forEach(g => { g.hidden = !g.querySelector('.trophy:not([hidden])'); });
-  document.querySelectorAll('.stage').forEach(s => {
-    const any = !!s.querySelector('.trophy:not([hidden])');
-    s.hidden = searching && !any;
-    s.querySelector('.stage-clear').hidden = searching || !hide || any;
-  });
-  qStatus.hidden = !searching;
-  qStatus.textContent = !searching ? '' : found
-    ? `Найдено: ${found}`
-    : 'Ничего не нашлось. Попробуйте имя босса или слово из описания трофея.';
+  document.querySelectorAll('[data-sf]').forEach(b => b.setAttribute('aria-pressed', String(!!sf[b.dataset.sf])));
+  document.querySelectorAll('[data-sf-stage]').forEach(b => b.setAttribute('aria-pressed', String(sf.stage === +b.dataset.sfStage)));
+  document.querySelectorAll('[data-sf-grade]').forEach(b => b.setAttribute('aria-pressed', String(sf.grade === b.dataset.sfGrade)));
+  $('hints').hidden = active;
+  results.hidden = !active;
+  if (!active) { results.innerHTML = ''; qStatus.textContent = ''; return; }
+  const ids = ORDER.filter(id => words.every(w => haystack[id].includes(w))
+    && (!sf.ctr || T[id].goal) && (sf.stage === null || stageOf[id] === sf.stage) && (sf.grade === null || T[id].g === sf.grade));
+  results.dataset.hideDone = sf.todo ? '1' : '0';
+  results.innerHTML = ids.map(id => rowHTML(id, 'search')).join('');
+  syncSearch();
+}
+function syncSearch() {
+  if (results.hidden) return;
+  syncRows(results);
+  const n = results.querySelectorAll('.row:not([hidden])').length;
+  results.hidden = n === 0;
+  qStatus.textContent = n ? `Найдено: ${n}` : 'Ничего не нашлось. Попробуйте имя босса или слово из описания трофея.';
+}
+qInput.addEventListener('input', renderSearch);
+qInput.addEventListener('keydown', e => { if (e.key === 'Enter') qInput.blur(); });
+qClear.addEventListener('click', () => { qInput.value = ''; renderSearch(); qInput.focus(); });
+
+/* ---------- 魂 seals ---------- */
+const seF = Object.assign({ status: 'all', grade: 'all', stage: 'all' }, ui.seals || {});
+const rotOf = id => { let h = 0; for (const c of id) h = (h * 31 + c.charCodeAt(0)) % 997; return (h % 9) - 4; };
+function hankoHTML(id, big) {
+  const t = T[id], d = isDone(id), p = psn.has(id);
+  return `<span class="hanko${big ? ' hanko-lg' : ''} g-${t.g}${d ? ' on' : ''}${p ? ' psn' : ''}" style="--rot:${d ? rotOf(id) : 0}deg" aria-hidden="true"><span class="hk">${GK[t.g]}</span><span class="psn-mini">PSN</span></span>`;
+}
+function renderSeals() {
+  const ids = ORDER.filter(id => (seF.status === 'all' || (seF.status === 'done') === isDone(id))
+    && (seF.grade === 'all' || T[id].g === seF.grade) && (seF.stage === 'all' || stageOf[id] === +seF.stage));
+  $('sealGrid').innerHTML = ids.length ? ids.map(id => {
+    const t = T[id], d = isDone(id), p = psn.has(id);
+    const st = p ? 'получен по данным PSN' : d ? 'отмечен вручную' : 'не получен';
+    return `<button type="button" class="seal-cell${d ? ' is-on' : ''}" data-open="${id}" aria-label="${esc(`${t.en} / ${t.ru}, ${gradeName[t.g]}, ${st}`)}">${hankoHTML(id)}<span class="seal-name" aria-hidden="true">${t.en}</span>${t.goal && !d ? `<span class="seal-ctr" aria-hidden="true">${countOf(id)}/${t.goal}</span>` : ''}</button>`;
+  }).join('') : '<p class="empty" style="grid-column:1/-1">Под эти фильтры печатей нет.</p>';
+  const n = IDS.filter(isDone).length, np = IDS.filter(id => psn.has(id)).length;
+  $('sealSum').innerHTML = `<span>Собрано <b>${n}/52</b></span><span>PSN <b>${np}</b></span><span>вручную <b>${n - np}</b></span><span>показано <b>${ids.length}</b></span>`;
+  document.querySelectorAll('[data-se]').forEach(b => b.setAttribute('aria-pressed', String(seF[b.dataset.se] === b.dataset.v)));
 }
 
-function applyState() {
-  rows.forEach(l => {
-    const id = l.dataset.id;
-    const fromPsn = psn.has(id);
-    const inp = l.querySelector('input');
-    l.classList.toggle('done', isDone(id));
-    l.classList.toggle('from-psn', fromPsn);
-    inp.checked = isDone(id);
-    inp.disabled = fromPsn;
-    if (fromPsn) inp.setAttribute('aria-description', 'Получен по данным PSN'); else inp.removeAttribute('aria-description');
+/* ---------- 鬼 bosses ---------- */
+let boss = ['general', 'ganryu', 'yoshitsune', 'rematch'].includes(ui.boss) ? ui.boss : 'general';
+function showBoss(b, focus) {
+  boss = b; ui.boss = b; saveUi();
+  document.querySelectorAll('.btile').forEach(t => {
+    const on = t.dataset.boss === b;
+    t.setAttribute('aria-selected', String(on));
+    t.tabIndex = on ? 0 : -1;
+    if (on && focus) t.focus();
   });
-  update();
-  refreshVisibility();
+  document.querySelectorAll('.boss-card').forEach(c => { c.hidden = c.id !== 'boss-' + b; });
 }
+function updateAttempts() {
+  ['ganryu', 'yoshitsune'].forEach(k => {
+    const n = attempts[k] | 0;
+    document.querySelectorAll(`[data-att-val="${k}"]`).forEach(el => { el.textContent = n; });
+    document.querySelectorAll(`[data-att-label="${k}"]`).forEach(el => { el.textContent = `попыток: ${n}`; });
+    document.querySelectorAll(`[data-att="${k}"][data-d="-1"]`).forEach(el => { el.disabled = n === 0; });
+  });
+}
+function setPhase(n, focus) {
+  document.querySelectorAll('[data-phase]').forEach(b => {
+    const on = b.dataset.phase === String(n);
+    b.setAttribute('aria-selected', String(on));
+    b.tabIndex = on ? 0 : -1;
+    $('php-' + b.dataset.phase).hidden = !on;
+    if (on && focus) b.focus();
+  });
+}
+// Arrow keys move between tabs in any tablist on the page
+function arrowTabs(list, sel, activate) {
+  list.addEventListener('keydown', e => {
+    if (!['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown', 'Home', 'End'].includes(e.key)) return;
+    const items = [...list.querySelectorAll(sel)];
+    const i = items.indexOf(document.activeElement);
+    if (i < 0) return;
+    e.preventDefault();
+    const n = e.key === 'Home' ? 0 : e.key === 'End' ? items.length - 1
+      : (i + (e.key === 'ArrowLeft' || e.key === 'ArrowUp' ? -1 : 1) + items.length) % items.length;
+    activate(items[n]);
+  });
+}
+arrowTabs(document.querySelector('.boss-tiles'), '.btile', el => showBoss(el.dataset.boss, true));
+arrowTabs(document.querySelector('.phase-tabs'), '[data-phase]', el => setPhase(el.dataset.phase, true));
+
+/* ---------- bottom sheet: trophy card ---------- */
+const sheetRoot = $('sheetRoot'), sheet = $('sheet'), shBody = $('shBody'), shToggle = $('shToggle'), appEl = $('app');
+let sheetId = null, opener = null, sheetTimer = null;
+const reduced = () => window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+function fillSheet() {
+  const id = sheetId, t = T[id], d = isDone(id), p = psn.has(id), si = stageOf[id];
+  const status = p ? 'получен по данным PSN' : d ? 'отмечен вручную' : 'не получен';
+  shBody.innerHTML = `
+    <div class="card-hd">${hankoHTML(id, true)}
+      <div class="card-tt"><p class="card-grade">${gradeTitle[t.g]} · <span class="${d ? 'on' : ''}">${status}</span></p><h2 id="shTitle">${t.en}</h2><p class="card-ru">${t.ru}</p></div>
+    </div>
+    <p class="card-d">${t.d}</p>
+    ${t.goal ? `<div class="counter" id="ctr" role="group" aria-label="Счётчик">
+      <button type="button" class="ctr-btn" data-ctr="-1" aria-label="Минус один">−</button>
+      <div class="ctr-mid"><span class="ctr-lbl">Счётчик</span><span class="ctr-val"><b id="ctrVal">0</b> / ${t.goal}</span><span class="ctr-bar" aria-hidden="true"><i id="ctrBar"></i></span><span class="ctr-note" id="ctrNote"></span></div>
+      <button type="button" class="ctr-btn plus" data-ctr="1" aria-label="Плюс один">+</button>
+    </div>` : ''}
+    <section class="card-tip"><h3>Совет</h3><p>${t.tip}</p>${t.who ? `<p class="who">— ${t.who}</p>` : ''}</section>
+    <div class="card-rar"><span class="rb" aria-hidden="true"><i style="width:${t.psn}%"></i></span>получили ${ru1(t.psn)}% игроков PSN</div>
+    <button type="button" class="card-stage" data-go="#stage-${si + 1}"><span class="gk" aria-hidden="true">${STAGES[si].k}</span><span>Этап ${si + 1} · ${STAGES[si].short}<small>${groupOf[id]}</small></span>${CHEV_R}</button>`;
+  updateCounter();
+  updateToggle();
+}
+function updateToggle() {
+  const id = sheetId, d = isDone(id), p = psn.has(id);
+  shToggle.disabled = p;
+  shToggle.classList.toggle('undo', d && !p);
+  shToggle.innerHTML = p ? '<span class="gk" aria-hidden="true">魂</span>Получен по данным PSN' : d ? 'Снять отметку' : '<span class="gk" aria-hidden="true">賞</span>Получил';
+}
+function updateCounter() {
+  const id = sheetId;
+  if (!id || !T[id].goal || !$('ctr')) return;
+  const g = T[id].goal, d = isDone(id), v = d ? g : countOf(id);
+  $('ctrVal').textContent = v;
+  $('ctrBar').style.width = (v / g * 100) + '%';
+  $('ctr').classList.toggle('full', d || v >= g);
+  const [minus, plus] = $('ctr').querySelectorAll('.ctr-btn');
+  minus.disabled = d || v <= 0;
+  plus.disabled = d || v >= g;
+  $('ctrNote').textContent = d ? 'Выполнено: трофей получен' : v >= g ? 'Цель набрана: отметьте трофей, когда он выпадет' : `Осталось ${g - v}`;
+}
+function openSheet(id, from) {
+  clearTimeout(sheetTimer);
+  sheetId = id;
+  opener = from || document.activeElement;
+  fillSheet();
+  sheetRoot.hidden = false;
+  sheet.style.transform = '';
+  shBody.scrollTop = 0;
+  document.documentElement.classList.add('locked');
+  appEl.inert = true;
+  if (!toast.hidden) toast.classList.add('top');
+  requestAnimationFrame(() => requestAnimationFrame(() => sheetRoot.classList.add('open')));
+  sheet.focus({ preventScroll: true });
+}
+function closeSheet(instant) {
+  if (!sheetId) return;
+  sheetId = null;
+  sheetRoot.classList.remove('open');
+  sheet.classList.remove('dragging');
+  sheet.style.transform = '';
+  appEl.inert = false;
+  document.documentElement.classList.remove('locked');
+  toast.classList.remove('top');
+  clearTimeout(sheetTimer);
+  if (instant || reduced()) sheetRoot.hidden = true;
+  else sheetTimer = setTimeout(() => { sheetRoot.hidden = true; }, 320);
+  if (!instant && opener && document.contains(opener) && opener.offsetParent !== null) opener.focus({ preventScroll: true });
+  opener = null;
+}
+$('shClose').addEventListener('click', () => closeSheet());
+$('scrim').addEventListener('click', () => closeSheet());
+shToggle.addEventListener('click', () => { if (sheetId) setDone(sheetId, !isDone(sheetId)); });
+
+// Swipe down to close: from the grab bar always, from the body only when it is scrolled to the top
+let drag = null;
+sheet.addEventListener('touchstart', e => {
+  if (e.touches.length !== 1) return;
+  const onGrab = !!e.target.closest('.sheet-grab');
+  if (!onGrab && shBody.scrollTop > 0) return;
+  drag = { y: e.touches[0].clientY, t: Date.now(), dy: 0, moving: false };
+}, { passive: true });
+sheet.addEventListener('touchmove', e => {
+  if (!drag) return;
+  const dy = e.touches[0].clientY - drag.y;
+  if (!drag.moving) {
+    if (dy < 6) { if (dy < -4) drag = null; return; }
+    drag.moving = true;
+    sheet.classList.add('dragging');
+  }
+  drag.dy = Math.max(0, dy);
+  sheet.style.transform = `translateY(${drag.dy}px)`;
+  e.preventDefault();
+}, { passive: false });
+function endDrag() {
+  if (!drag) return;
+  const d = drag; drag = null;
+  sheet.classList.remove('dragging');
+  if (!d.moving) return;
+  const v = d.dy / Math.max(1, Date.now() - d.t);
+  if (d.dy > 110 || (d.dy > 40 && v > 0.5)) closeSheet();
+  else sheet.style.transform = '';
+}
+sheet.addEventListener('touchend', endDrag);
+sheet.addEventListener('touchcancel', endDrag);
+
+document.addEventListener('keydown', e => {
+  if (!sheetId) return;
+  if (e.key === 'Escape') { e.preventDefault(); closeSheet(); return; }
+  if (e.key !== 'Tab') return;
+  const f = [...sheet.querySelectorAll('button:not([disabled]), a[href], input:not([disabled]), [tabindex]:not([tabindex="-1"])')].filter(el => el.offsetParent !== null);
+  if (!f.length) { e.preventDefault(); return; }
+  const first = f[0], last = f[f.length - 1], a = document.activeElement;
+  if (e.shiftKey && (a === first || a === sheet || !sheet.contains(a))) { e.preventDefault(); last.focus(); }
+  else if (!e.shiftKey && (a === last || !sheet.contains(a))) { e.preventDefault(); first.focus(); }
+});
 
 /* ---------- ticking + undo ---------- */
-const toast = document.getElementById('toast');
-const toastText = document.getElementById('toastText');
-const toastUndo = document.getElementById('toastUndo');
+const toast = $('toast'), toastText = $('toastText'), toastUndo = $('toastUndo');
 let toastTimer = null, toastId = null, toastWas = null;
-
 function closeToast() {
   clearTimeout(toastTimer);
   toast.hidden = true;
+  toast.classList.remove('top');
   if (toastId) pending.delete(toastId);
   toastId = null;
-  refreshVisibility();
+  refresh();
 }
 function showToast(id, checked) {
   if (toastId && toastId !== id) pending.delete(toastId);
   toastId = id; toastWas = !checked;
   toastText.textContent = `${checked ? 'Отмечено' : 'Снята отметка'}: ${T[id].en}`;
   toastUndo.textContent = checked ? 'Отменить' : 'Вернуть';
+  toast.classList.toggle('top', !!sheetId);
   toast.hidden = false;
   clearTimeout(toastTimer);
   toastTimer = setTimeout(closeToast, 5000);
@@ -928,66 +1581,184 @@ toastUndo.addEventListener('click', () => {
   if (toastWas) done[toastId] = 1; else delete done[toastId];
   save();
   closeToast();
-  applyState();
 });
-
-tl.addEventListener('change', e => {
-  const l = e.target.closest('.trophy');
-  if (!l) return;
-  const id = l.dataset.id;
-  if (psn.has(id)) return;
-  if (e.target.checked) { done[id] = 1; pending.add(id); } else delete done[id];
+function setDone(id, val) {
+  if (psn.has(id)) { refresh(); return; }
+  if (val) { done[id] = 1; pending.add(id); } else delete done[id];
   save();
-  showToast(id, e.target.checked);
-  applyState();
-});
+  showToast(id, val);
+  refresh();
+}
+function bump(id, d) {
+  const g = T[id].goal;
+  if (!g || isDone(id)) return;
+  const v = Math.max(0, Math.min(g, countOf(id) + d));
+  if (v) counts[id] = v; else delete counts[id];
+  saveCounts();
+  updateCounter();
+  syncRows(document);
+  say(`${T[id].ru}: ${v} из ${g}`);
+}
 
-// A tap that only closes the iOS keyboard must not tick anything
+/* ---------- refresh everything that depends on ticks ---------- */
+function refresh() {
+  updateHeader();
+  updateRoad();
+  if (cur && cur.view === 'stage') updateStage();
+  if (cur && cur.view === 'search') syncSearch();
+  if (cur && cur.view === 'seals') renderSeals();
+  if (sheetId) {
+    const ae = document.activeElement;
+    const keepCtr = ae && ae.dataset && ae.dataset.ctr;
+    fillSheet();
+    if (keepCtr) { const b = sheet.querySelector(`[data-ctr="${keepCtr}"]`); if (b && !b.disabled) b.focus(); }
+  }
+}
+
+/* ---------- router: #path #search #bosses #seals #stage-1…5 ---------- */
+const VIEWS = ['path', 'stage', 'search', 'bosses', 'seals'];
+const TABS = [...document.querySelectorAll('.tab')];
+const TITLES = { path: 'Путь', search: 'Поиск', bosses: 'Боссы', seals: 'Печати' };
+let cur = null;
+const scrollMem = readObj(KEY + '-pos');
+function parse(h) {
+  h = String(h || '').replace(/^#/, '');
+  if (h === 'carnage') return { view: 'bosses', key: 'bosses', alias: '#bosses' };
+  const m = /^stage-([1-5])$/.exec(h);
+  if (m) return { view: 'stage', stage: +m[1] - 1, key: h };
+  if (h === 'rules') return { view: 'path', key: 'path', open: 'rules', alias: '#path' };
+  if (['path', 'search', 'bosses', 'seals'].includes(h)) return { view: h, key: h };
+  return { view: 'path', key: 'path' };
+}
+function go(hash, opts) {
+  opts = opts || {};
+  const r = parse(hash);
+  if (cur && r.key === cur.key && !r.open) { if (sheetId) closeSheet(true); return; }
+  try { history[opts.replace ? 'replaceState' : 'pushState']({ fromPath: !!opts.fromPath }, '', hash); }
+  catch (e) { location.hash = hash; return; }
+  render(opts);
+}
+function render(opts) {
+  opts = opts || {};
+  const r = parse(location.hash);
+  if (r.alias) history.replaceState(history.state, '', r.alias);
+  if (cur && cur.key === r.key && !r.open && !opts.boot) return; // popstate + hashchange both fire on back
+  if (cur) scrollMem[cur.key] = Math.round(window.scrollY);
+  if (sheetId) closeSheet(true);
+  if (document.activeElement === qInput && r.view !== 'search') qInput.blur();
+  cur = r;
+  VIEWS.forEach(v => { $('v-' + v).hidden = v !== r.view; });
+  const tabView = r.view === 'stage' ? 'path' : r.view;
+  TABS.forEach(t => {
+    const on = t.dataset.tab === tabView;
+    t.setAttribute('aria-selected', String(on));
+    t.tabIndex = on ? 0 : -1;
+  });
+  $('tab-path').setAttribute('aria-controls', r.view === 'stage' ? 'v-stage' : 'v-path');
+  if (r.view === 'stage') renderStage(r.stage);
+  if (r.view === 'search') renderSearch();
+  if (r.view === 'seals') renderSeals();
+  if (r.view === 'bosses') updateAttempts();
+  document.title = r.view === 'stage' ? `${STAGES[r.stage].short} · Onimusha` : r.view === 'path' ? 'Onimusha: путь к платине' : `${TITLES[r.view]} · Onimusha`;
+  window.scrollTo(0, opts.fresh ? 0 : (scrollMem[r.key] || 0));
+  if (r.view === 'path') drawRoad();
+  if (r.open === 'rules') { $('rules').open = true; $('rules').scrollIntoView({ block: 'start' }); }
+  store.set(KEY + '-route', r.key);
+  if (!opts.boot && !opts.keepFocus) {
+    const h = { path: 'pathTitle', stage: 'stTitle', search: 'searchTitle', bosses: 'bossTitle', seals: 'sealTitle' }[r.view];
+    if (r.view !== 'search' || qInput.value) $(h).focus({ preventScroll: true });
+  }
+}
+window.addEventListener('popstate', () => render());
+window.addEventListener('hashchange', () => render());
+
+TABS.forEach(t => t.addEventListener('click', () => {
+  const v = t.dataset.tab;
+  if (cur && cur.view === v) {
+    window.scrollTo({ top: 0, behavior: reduced() ? 'auto' : 'smooth' });
+    if (v === 'search') qInput.focus();
+    return;
+  }
+  if (v === 'path' && cur && cur.view === 'stage') { backToPath(); return; }
+  go('#' + v, { keepFocus: v === 'search' });
+  if (v === 'search' && !qInput.value) qInput.focus(); // inside the tap, so iOS opens the keyboard
+}));
+arrowTabs(document.querySelector('.tabbar-in'), '.tab', el => { el.focus(); el.click(); });
+
+function backToPath() {
+  if (history.state && history.state.fromPath) history.back();
+  else go('#path', { replace: true });
+}
+$('back').addEventListener('click', backToPath);
+const fromPath = () => !!(history.state && history.state.fromPath);
+$('prevStage').addEventListener('click', () => { if (stageIdx > 0) go(`#stage-${stageIdx}`, { replace: true, fresh: true, fromPath: fromPath() }); });
+$('nextStage').addEventListener('click', () => { if (stageIdx < 4) go(`#stage-${stageIdx + 2}`, { replace: true, fresh: true, fromPath: fromPath() }); });
+$('nextGate').addEventListener('click', () => {
+  if (stageIdx < 4) go(`#stage-${stageIdx + 2}`, { replace: true, fresh: true, fromPath: fromPath() });
+  else backToPath();
+});
+$('hideBtn').addEventListener('click', () => { hide = !hide; store.set(KEY + '-hide', hide ? '1' : '0'); updateStage(); });
+
+/* ---------- one delegated click handler ---------- */
+// A tap that only closes the iOS keyboard must not tick anything or open a card
 let swallowClick = false;
-tl.addEventListener('pointerdown', () => {
-  if (document.activeElement === qInput) { qInput.blur(); swallowClick = true; setTimeout(() => { swallowClick = false; }, 700); }
-}, true);
-tl.addEventListener('click', e => {
-  if (swallowClick) { swallowClick = false; e.preventDefault(); e.stopPropagation(); return; }
-  const a = e.target.closest('a[href^="#"]');
-  if (a && searchWords().length) { qInput.value = ''; refreshVisibility(); return; }
-  if (compact && !a && e.target.closest('.t-main')) {
-    const l = e.target.closest('.trophy');
-    l.classList.toggle('open');
+document.addEventListener('pointerdown', e => {
+  if (document.activeElement === qInput && e.target.closest('#results')) {
+    qInput.blur(); swallowClick = true; setTimeout(() => { swallowClick = false; }, 700);
   }
 }, true);
-tl.addEventListener('touchmove', () => { if (document.activeElement === qInput) qInput.blur(); }, { passive: true });
+document.addEventListener('click', e => {
+  if (swallowClick && e.target.closest('#results')) { swallowClick = false; e.preventDefault(); e.stopPropagation(); }
+}, true);
+results.addEventListener('touchmove', () => { if (document.activeElement === qInput) qInput.blur(); }, { passive: true });
 
-/* ---------- search ---------- */
-qInput.addEventListener('input', () => {
-  const wasSearching = document.body.classList.contains('searching');
-  refreshVisibility();
-  if (searchWords().length && !wasSearching) qStatus.scrollIntoView({ block: 'start' });
+document.addEventListener('click', e => {
+  const t = e.target;
+  const a = t.closest('a[href^="#"]');
+  if (a) { e.preventDefault(); go(a.getAttribute('href'), { fresh: true }); return; }
+  const g = t.closest('[data-go]');
+  if (g) { go(g.dataset.go, { fresh: true }); return; }
+  const gate = t.closest('[data-gate]');
+  if (gate) { go(`#stage-${+gate.dataset.gate + 1}`, { fromPath: true, fresh: true }); return; }
+  const op = t.closest('[data-open]');
+  if (op) { openSheet(op.dataset.open, op); return; }
+  const c = t.closest('[data-ctr]');
+  if (c && sheetId) { bump(sheetId, +c.dataset.ctr); return; }
+  const at = t.closest('[data-att]');
+  if (at) {
+    const k = at.dataset.att;
+    attempts[k] = Math.max(0, (attempts[k] | 0) + +at.dataset.d);
+    saveAttempts(); updateAttempts();
+    return;
+  }
+  const bt = t.closest('.btile');
+  if (bt) { showBoss(bt.dataset.boss); return; }
+  const ph = t.closest('[data-phase]');
+  if (ph) { setPhase(ph.dataset.phase); return; }
+  const q = t.closest('[data-q]');
+  if (q) { qInput.value = q.dataset.q; renderSearch(); return; }
+  const f = t.closest('[data-sf]');
+  if (f) { sf[f.dataset.sf] = !sf[f.dataset.sf]; renderSearch(); return; }
+  const fs = t.closest('[data-sf-stage]');
+  if (fs) { sf.stage = sf.stage === +fs.dataset.sfStage ? null : +fs.dataset.sfStage; renderSearch(); return; }
+  const fg = t.closest('[data-sf-grade]');
+  if (fg) { sf.grade = sf.grade === fg.dataset.sfGrade ? null : fg.dataset.sfGrade; renderSearch(); return; }
+  const se = t.closest('[data-se]');
+  if (se) { seF[se.dataset.se] = se.dataset.v; ui.seals = seF; saveUi(); renderSeals(); return; }
 });
-qInput.addEventListener('keydown', e => { if (e.key === 'Enter') qInput.blur(); });
-qClear.addEventListener('click', () => { qInput.value = ''; refreshVisibility(); qInput.focus(); });
-chips.forEach(a => a.addEventListener('click', () => {
-  if (qInput.value) { qInput.value = ''; refreshVisibility(); }
-}));
 
-/* ---------- toggles ---------- */
-const hideBtns = [document.getElementById('hide'), document.getElementById('hide2')];
-const compactBtn = document.getElementById('compact');
-function applyToggles() {
-  hideBtns.forEach(b => b.setAttribute('aria-pressed', String(hide)));
-  compactBtn.setAttribute('aria-pressed', String(compact));
-  document.body.classList.toggle('compact', compact);
-  if (!compact) rows.forEach(l => l.classList.remove('open'));
-  refreshVisibility();
-}
-hideBtns.forEach(b => b.addEventListener('click', () => {
-  hide = !hide; store.set(KEY + '-hide', hide ? '1' : '0'); applyToggles();
-}));
-compactBtn.addEventListener('click', () => {
-  compact = !compact; store.set(KEY + '-compact', compact ? '1' : '0'); applyToggles();
+document.addEventListener('change', e => {
+  const el = e.target;
+  if (el.dataset.tick) { setDone(el.dataset.tick, el.checked); return; }
+  if (el.dataset.task) {
+    if (el.checked) tasks[el.dataset.task] = 1; else delete tasks[el.dataset.task];
+    saveTasks();
+    updateStage();
+  }
 });
 
-const resetBtn = document.getElementById('reset');
+/* ---------- reset manual marks ---------- */
+const resetBtn = $('reset');
 let armed = null;
 resetBtn.addEventListener('click', () => {
   if (!armed) {
@@ -996,13 +1767,33 @@ resetBtn.addEventListener('click', () => {
     return;
   }
   clearTimeout(armed); armed = null;
-  done = {}; save(); closeToast(); applyState();
+  done = {}; save(); closeToast();
   resetBtn.textContent = 'Ручные отметки сброшены';
   setTimeout(() => { resetBtn.textContent = 'Сбросить ручные отметки'; }, 2000);
 });
 
+/* ---------- theme: auto / light / dark ---------- */
+const THEMES = ['auto', 'light', 'dark'];
+const THEME_LABEL = { auto: 'как в системе', light: 'светлая', dark: 'тёмная' };
+let theme = THEMES.includes(store.get(KEY + '-theme', 'auto')) ? store.get(KEY + '-theme', 'auto') : 'auto';
+const metas = [...document.querySelectorAll('meta[name="theme-color"]')];
+const META_DEFAULT = metas.map(m => m.content);
+function applyTheme() {
+  const html = document.documentElement;
+  if (theme === 'auto') html.removeAttribute('data-theme'); else html.setAttribute('data-theme', theme);
+  metas.forEach((m, i) => { m.content = theme === 'auto' ? META_DEFAULT[i] : (theme === 'dark' ? '#0A1021' : '#EEF1F6'); });
+  $('themeBtn').setAttribute('aria-label', `Тема: ${THEME_LABEL[theme]}. Переключить`);
+  requestAnimationFrame(drawRoad);
+}
+$('themeBtn').addEventListener('click', () => {
+  theme = THEMES[(THEMES.indexOf(theme) + 1) % THEMES.length];
+  store.set(KEY + '-theme', theme);
+  applyTheme();
+  say(`Тема: ${THEME_LABEL[theme]}`);
+});
+
 /* ---------- PSN sync data ---------- */
-const syncEl = document.getElementById('sync');
+const syncEl = $('sync');
 const norm = s => String(s).toLowerCase()
   .replace(/[‘’‛`´]/g, "'")
   .replace(/[‐-―−]/g, '-')
@@ -1020,18 +1811,21 @@ function loadPsn() {
     .then(p => {
       if (!p || !p.updated) {
         syncEl.textContent = 'Сверки с PSN ещё не было. Свои отметки хранятся на этом устройстве.';
+        syncEl.classList.add('off');
         return;
       }
       const names = [...new Set((p.earned || []).map(e => norm(typeof e === 'string' ? e : e && e.name)))];
-      psn = new Set(Object.keys(T).filter(id => names.includes(norm(T[id].en))));
+      psn = new Set(IDS.filter(id => names.includes(norm(T[id].en))));
       const unknown = names.length - psn.size;
       const when = new Date(p.updated).toLocaleDateString('ru-RU', { day: 'numeric', month: 'long' });
       syncEl.textContent = `Сверено с PSN ${when}: ${psn.size} из 52.`
         + (unknown > 0 ? ` Не распознано названий: ${unknown}.` : '')
         + ' Остальные отметки — на этом устройстве.';
-      applyState();
+      syncEl.classList.remove('off');
+      refresh();
     })
     .catch(err => {
+      syncEl.classList.add('off');
       syncEl.textContent = err && err.message === 'missing'
         ? 'Файл сверки с PSN не найден. Свои отметки хранятся на этом устройстве.'
         : 'Не удалось загрузить данные PSN (нет сети?). Свои отметки хранятся на этом устройстве.';
@@ -1043,35 +1837,32 @@ document.addEventListener('visibilitychange', () => {
 });
 window.addEventListener('pageshow', e => { if (e.persisted) loadPsn(); });
 
-/* ---------- sticky bar height, active stage, scroll memory ---------- */
-const topbar = document.getElementById('topbar');
-const setBarH = () => document.documentElement.style.setProperty('--bar-h', topbar.offsetHeight + 'px');
-setBarH();
-if (window.ResizeObserver) new ResizeObserver(setBarH).observe(topbar);
-else window.addEventListener('resize', setBarH);
-
-const sections = [...document.querySelectorAll('.stage'), document.getElementById('carnage')];
-let ticking = false, saveTimer = null;
-function onScroll() {
-  ticking = false;
-  const line = topbar.offsetHeight + 24;
-  let current = null;
-  sections.forEach(s => { if (!s.hidden && s.offsetParent !== null && s.getBoundingClientRect().top <= line) current = s; });
-  chips.forEach(a => a.setAttribute('aria-current', String(!!current && a.getAttribute('href') === '#' + current.id)));
-  clearTimeout(saveTimer);
-  saveTimer = setTimeout(() => store.set(KEY + '-scroll', String(Math.round(window.scrollY))), 400);
-}
-window.addEventListener('scroll', () => { if (!ticking) { ticking = true; requestAnimationFrame(onScroll); } }, { passive: true });
-
+/* ---------- scroll memory ---------- */
+let scrollTimer = null;
+window.addEventListener('scroll', () => {
+  clearTimeout(scrollTimer);
+  scrollTimer = setTimeout(() => {
+    if (!cur) return;
+    scrollMem[cur.key] = Math.round(window.scrollY);
+    store.set(KEY + '-pos', JSON.stringify(scrollMem));
+  }, 400);
+}, { passive: true });
 if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
 
 /* ---------- boot ---------- */
-applyState();
-applyToggles();
+applyTheme();
+showBoss(boss);
+setPhase(1);
+updateAttempts();
+if (!location.hash) {
+  const last = store.get(KEY + '-route', 'path');
+  history.replaceState(null, '', '#' + (parse('#' + last).key));
+}
+render({ boot: true });
+updateHeader();
+updateRoad();
 loadPsn();
-const savedY = parseInt(store.get(KEY + '-scroll', '0'), 10);
-if (!location.hash && savedY > 0) requestAnimationFrame(() => { window.scrollTo(0, savedY); onScroll(); });
-else onScroll();
+if (document.fonts && document.fonts.ready) document.fonts.ready.then(drawRoad);
 </script>
 </body>
 </html>
